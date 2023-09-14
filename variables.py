@@ -1,4 +1,5 @@
 import pygame
+from background import Background
 
 class Variables():
 
@@ -12,6 +13,19 @@ class Variables():
         
         self.fontSize = 30
         self.font = pygame.font.Font('media/freeFont.otf', self.fontSize)
+        
+        self.screen = pygame.display.set_mode([self.sW, self.sH]) #Makes a screen that's that wide
+        
+        self.background = Background()
+
+    def doAnUpdate(self):
+        
+        self.eventHandler() # Updates with any potential user interaction
+        
+        
+
+        self.background.drawMainBackground(self.screen) # Draws the background
+        self.finishPaint() # Paints whatever is desired to be painted on the screen
 
     def eventHandler(self):
 
@@ -27,7 +41,10 @@ class Variables():
             if event.type == pygame.MOUSEBUTTONDOWN: self.mouseDown = True
             if event.type == pygame.MOUSEBUTTONUP: self.mouseDown = False
 
-    def finishPaint(self, screen):
+    def finishPaint(self):
 
         pygame.display.flip() #Displays currently drawn frame
-        screen.fill(pygame.Color(0,0,0)) #Clears screen with a black color
+        self.screen.fill(pygame.Color(0,0,0)) #Clears screen with a black color
+        
+    
+        
