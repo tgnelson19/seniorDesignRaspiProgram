@@ -16,7 +16,7 @@ class Buttons():
         self.textRGB = (textR, textG, textB)
         self.text = text
         self.fontSize = fontSize
-        self.font = pygame.font.Font('media/freeFont.otf', self.fontSize)
+        self.font = pygame.font.Font('media/coolveticarg.otf', self.fontSize)
         self.textRender = self.font.render(str(self.text), True, self.textRGB)
         self.textRect = self.textRender.get_rect(center=(self.buttonRect.centerx, self.buttonRect.centery))
 
