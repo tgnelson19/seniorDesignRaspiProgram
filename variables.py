@@ -38,8 +38,12 @@ class Variables:
 
         self.entryJustDeleted = False
 
-        cred_obj = firebase_admin.credentials.Certificate("seniordesign-9342c-firebase-adminsdk-649ck-c9a18f8baa.json")
-        default_app = firebase_admin.initialize_app(cred_obj, {"databaseURL": "https://seniordesign-9342c-default-rtdb.firebaseio.com/"})
+        #
+        #
+        #Put Creds here
+        #
+        #
+        #
 
 
         #Loads in current saved JSON to the program
@@ -79,12 +83,12 @@ class Variables:
 
     #Syncs current stored data to the database
 
-    def syncToDatabase(self):
-        ref = db.reference("/")
-
-        with open("entries.json", "r") as f:
-            file_contents = json.load(f)
-        ref.set(file_contents)
+    #def syncToDatabase(self):
+    #    ref = db.reference("/")
+    #
+    #   with open("entries.json", "r") as f:
+    #       file_contents = json.load(f)
+    #   ref.set(file_contents)
 
     #Updates the program (Done once per tick)
 
@@ -101,8 +105,8 @@ class Variables:
         if self.addExampleEntry.isClicked(self.mouseDown):
             self.makeNewEntry()
 
-        if self.syncButton.isClicked(self.mouseDown):
-            self.syncToDatabase()
+        #if self.syncButton.isClicked(self.mouseDown):
+            #self.syncToDatabase()
 
         if not self.mouseDown:
             self.entryJustDeleted = False
