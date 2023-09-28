@@ -23,6 +23,13 @@ class Buttons():
     def drawButton(self, screen):
         pygame.draw.rect(screen,self.buttonRGB, self.buttonRect) 
         screen.blit(self.textRender, self.textRect)
+        
+    def moveButton(self, x, y):
+        self.posX = x
+        self.posY = y
+        
+        self.buttonRect = pygame.Rect(self.posX, self.posY, self.width, self.height)
+        self.textRect = self.textRender.get_rect(center=(self.buttonRect.centerx, self.buttonRect.centery))
 
     def isHoveredOver(self):
         mouseX, mouseY = pygame.mouse.get_pos()

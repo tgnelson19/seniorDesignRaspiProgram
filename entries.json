@@ -1,0 +1,26 @@
+[
+  {
+    "EntryNum": "1",
+    "Name": "Apple",
+    "Quantity": "3",
+    "Expiration": "10/24/2023"
+  },
+  {
+    "EntryNum": "2",
+    "Name": "Banana",
+    "Quantity": "3",
+    "Expiration": "10/24/2023"
+  },
+  {
+    "EntryNum": "3",
+    "Name": "Pear",
+    "Quantity": "3",
+    "Expiration": "10/24/2023"
+  },
+  {
+    "EntryNum": "4",
+    "Name": "Dragonfruit",
+    "Quantity": "3",
+    "Expiration": "10/24/2023"
+  }
+]
