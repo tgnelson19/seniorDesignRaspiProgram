@@ -6,6 +6,9 @@ import json
 import firebase_admin
 from firebase_admin import db
 import json
+from datetime import date
+
+
 
 
 class Variables:
@@ -26,11 +29,13 @@ class Variables:
 
         self.background = Background()
 
-        self.addExampleEntry = Buttons(580, 60, 160, 100, 100, 100, 100, "Add Entry", 20, 255, 255, 255)
+        self.addExampleEntry = Buttons(580, 60, 160, 100, 100, 100, 100, "Add Entry", 25, 255, 255, 255)
 
-        self.syncButton = Buttons(580, 180, 160, 50, 100, 100, 100, "Sync Data", 20, 255, 255, 255)
+        self.syncButton = Buttons(580, 180, 160, 50, 100, 100, 100, "Sync Data", 25, 255, 255, 255)
 
-        self.buttonList = [self.addExampleEntry, self.syncButton]
+        self.exitButton = Buttons(580, 380, 160, 40, 100,0,0, "Exit App", 25, 255, 255, 255)
+
+        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton]
 
         self.entryList = []
 
@@ -40,11 +45,10 @@ class Variables:
 
         #
         #
-        #Put Creds here
+        #Put Credentials here for firebase
         #
         #
         #
-
 
         #Loads in current saved JSON to the program
 
@@ -65,8 +69,12 @@ class Variables:
     #Handles the creation of a new default entry (More functionality to be added)
     
     def makeNewEntry(self):
+
+        today = date.today()
+        formattedDate = today.strftime("%m/%d/%y")
+
         self.highestEntryNum = self.highestEntryNum + 1
-        newEntry = ItemEntry(str(self.highestEntryNum))
+        newEntry = ItemEntry(str(self.highestEntryNum),"Default", "0", str(formattedDate))
         self.entryList.append(newEntry)
 
         self.entriesJSON.append(
@@ -81,7 +89,13 @@ class Variables:
         with open("entries.json", "w") as f:
             json.dump(self.entriesJSON, f, indent=2)
 
+    #
+    #
+    #
     #Syncs current stored data to the database
+    #when uncommented
+    #
+    #
 
     #def syncToDatabase(self):
     #    ref = db.reference("/")
@@ -98,12 +112,19 @@ class Variables:
         )  # Draws the background first of everything
         self.eventHandler()  # Updates with any potential user interaction
 
+
+
         if len(self.buttonList) != 0:
+
             for button in self.buttonList:
+                button.isHoveredOver()
                 button.drawButton(self.screen)
 
         if self.addExampleEntry.isClicked(self.mouseDown):
             self.makeNewEntry()
+
+        if self.exitButton.isClicked(self.mouseDown):
+            self.done = True
 
         #if self.syncButton.isClicked(self.mouseDown):
             #self.syncToDatabase()
@@ -112,6 +133,7 @@ class Variables:
             self.entryJustDeleted = False
 
         for entry in self.entryList:
+            entry.entryButton.isHoveredOver()
             if (
                 entry.entryButton.isClicked(self.mouseDown)
                 and not self.entryJustDeleted

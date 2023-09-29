@@ -58,15 +58,16 @@ class Buttons:
 
     #Does an action if the button is hovered over (Mouse only)
     def isHoveredOver(self):
+        scaler = 1.05
         mouseX, mouseY = pygame.mouse.get_pos()
         if self.buttonRect.collidepoint(mouseX, mouseY):
-            leftGap = (self.buttonRect.width * 1.2 - self.buttonRect.width) / 2
-            topGap = (self.buttonRect.height * 1.2 - self.buttonRect.height) / 2
+            leftGap = (self.buttonRect.width * scaler - self.buttonRect.width) / 2
+            topGap = (self.buttonRect.height * scaler - self.buttonRect.height) / 2
             self.buttonRect = pygame.Rect(
                 self.posX - leftGap,
                 self.posY - topGap,
-                self.width * 1.2,
-                self.height * 1.2,
+                self.width * scaler,
+                self.height * scaler,
             )
         else:
             self.buttonRect = pygame.Rect(self.posX, self.posY, self.width, self.height)

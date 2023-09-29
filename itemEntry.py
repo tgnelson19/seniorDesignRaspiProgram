@@ -20,9 +20,9 @@ class ItemEntry:
         self.font = pygame.font.Font("media/coolveticarg.otf", self.fontSize)
 
         self.nameText = self.font.render(str(self.name), True, self.textRGB)
-        self.expDateText = self.font.render(str(self.expDate), True, self.textRGB)
-        self.quantityText = self.font.render(str(self.quantity), True, self.textRGB)
-        self.entryNumText = self.font.render(str(self.entryNum), True, self.textRGB)
+        self.expDateText = self.font.render("Entered: " + str(self.expDate), True, self.textRGB)
+        self.quantityText = self.font.render("Count: " + str(self.quantity), True, self.textRGB)
+        self.entryNumText = self.font.render("#" + str(self.entryNum), True, self.textRGB)
 
         self.entryButton = Buttons(0, 0, 50, 30, 200, 25, 25, "Delete", 10, 0, 0, 0)
 
@@ -32,23 +32,18 @@ class ItemEntry:
         entryBox = pygame.Rect(anchX, anchY, 460, 40)
         pygame.draw.rect(screen, (0, 0, 0), entryBox)
 
+        entryNumTextRect = self.entryNumText.get_rect(centery=entryBox.centery, left=anchX + 15)
+        screen.blit(self.entryNumText, entryNumTextRect)
+
         nameTextRect = self.nameText.get_rect(centery=entryBox.centery, left=anchX + 50)
         screen.blit(self.nameText, nameTextRect)
 
-        expDateTextRect = self.expDateText.get_rect(
-            centery=entryBox.centery, left=anchX + 200
-        )
-        screen.blit(self.expDateText, expDateTextRect)
-
-        quantityTextRect = self.quantityText.get_rect(
-            centery=entryBox.centery, left=anchX + 150
-        )
+        quantityTextRect = self.quantityText.get_rect(centery=entryBox.centery, left=anchX + 150)
         screen.blit(self.quantityText, quantityTextRect)
 
-        entryNumTextRect = self.entryNumText.get_rect(
-            centery=entryBox.centery, left=anchX + 20
-        )
-        screen.blit(self.entryNumText, entryNumTextRect)
+        expDateTextRect = self.expDateText.get_rect(centery=entryBox.centery, left=anchX + 250)
+        screen.blit(self.expDateText, expDateTextRect)
 
+        
         self.entryButton.moveButton(anchX + 400, anchY + 5)
         self.entryButton.drawButton(screen)
