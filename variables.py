@@ -29,13 +29,22 @@ class Variables:
 
         self.background = Background()
 
+
+        #button makers (topleft x, toplefty, width, hieght, r ,g ,b, text string, font size, Tr, Tg, TB )
+        
         self.addExampleEntry = Buttons(580, 60, 160, 100, 100, 100, 100, "Add Entry", 25, 255, 255, 255)
 
         self.syncButton = Buttons(580, 180, 160, 50, 100, 100, 100, "Sync Data", 25, 255, 255, 255)
 
         self.exitButton = Buttons(580, 380, 160, 40, 100,0,0, "Exit App", 25, 255, 255, 255)
+        
+        self.deleteallButton = Buttons(580, 250, 160, 40, 100,0,0, "Delete All", 25, 255, 255, 255)
+        
+        #end of buttion maker 
 
-        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton]
+
+        #button list
+        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton, self.deleteallButton]
 
         self.entryList = []
 
@@ -125,6 +134,12 @@ class Variables:
 
         if self.exitButton.isClicked(self.mouseDown):
             self.done = True
+            
+        if self.deleteallButton.isClicked(self.mouseDown):
+            self.entryList.clear()
+            with open("entries.json", "w") as f:
+                json.dump([], f, indent=2)
+            self.entriesJSON.clear()
 
         #if self.syncButton.isClicked(self.mouseDown):
             #self.syncToDatabase()
