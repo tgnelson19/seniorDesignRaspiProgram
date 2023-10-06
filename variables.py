@@ -40,11 +40,14 @@ class Variables:
         
         self.deleteallButton = Buttons(580, 250, 160, 40, 100,0,0, "Delete All", 25, 255, 255, 255)
         
+        self.keypadButton = Buttons(240, 160,50,50, 20, 20, 20, "keypad", 25, 255, 255, 255)
+        
         #end of buttion maker 
 
 
         #button list
-        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton, self.deleteallButton]
+        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton, self.deleteallButton,
+                           self.keypadButton]
 
         self.entryList = []
 
