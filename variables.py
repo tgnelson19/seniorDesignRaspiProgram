@@ -142,11 +142,24 @@ class Variables:
             
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
-            self.currItemEdited.showItemInList(100, 50, self.screen)
+            self.currItemEdited.showItemInList(160, 50, self.screen)
 
             self.keyboard.showKeys(self.screen)
 
             self.keypadAcceptButton.drawButton(self.screen)
+            
+            
+            
+            
+            
+            
+            temp = self.keyboard.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.name)
+            
+            if temp == "To Numberpad":
+                self.currState = "Home"
+            else:
+                self.currItemEdited.name = temp
+            
 
             if self.keypadAcceptButton.isClicked(self.mouseDown):
                 self.currState = "Home"

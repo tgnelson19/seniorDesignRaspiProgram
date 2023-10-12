@@ -3,15 +3,24 @@ from button import Buttons
 
 class Keyboard:
     def __init__(self):
+        
+        
 
         self.keyboardBackground = pygame.Rect(0, 180, 800, 480)  # Edit background
+        
+        self.textBoxBackground = pygame.Rect(200, 100, 400, 60)  # Edit background
+        
+        self.textRGB = (0,0,0)
+        self.fontSize = 30
+        self.font = pygame.font.Font("media/coolveticarg.otf", self.fontSize)
+        
 
-        self.topRowXShift = 20 + 50
-        self.topRowYShift = 0 + 80
-        self.midRowXShift = 35 + 50
-        self.midRowYShift = 60 + 80
-        self.botRowXShift = 60 + 50
-        self.botRowYShift = 120 + 80
+        self.topRowXShift = 20 + 100
+        self.topRowYShift = 0 
+        self.midRowXShift = 35 + 100
+        self.midRowYShift = 60 
+        self.botRowXShift = 60 + 100
+        self.botRowYShift = 120 
 
         self.qKey = Buttons (20 + self.topRowXShift,200 + self.topRowYShift,50,50,100,100,100, "Q", 15, 0,0,0)
         self.wKey = Buttons (80+ self.topRowXShift,200+ self.topRowYShift,50,50,100,100,100, "W", 15, 0,0,0)
@@ -41,16 +50,83 @@ class Keyboard:
         self.bKey = Buttons (260+ self.botRowXShift,200+ self.botRowYShift,50,50,100,100,100, "B", 15, 0,0,0)
         self.nKey = Buttons (320+ self.botRowXShift,200+ self.botRowYShift,50,50,100,100,100, "N", 15, 0,0,0)
         self.mKey = Buttons (380+ self.botRowXShift,200+ self.botRowYShift,50,50,100,100,100, "M", 15, 0,0,0)
+        
+        self.backKey = Buttons (440 + self.botRowXShift,200+ self.botRowYShift,100,50,190,0,0, "<==", 15, 0,0,0)
+        
+        self.enterKey = Buttons (-90 + self.botRowXShift,200+ self.botRowYShift,100,50,0,190,0, "Next", 15, 0,0,0)
+        
+        self.capsKey = Buttons (-65 + self.midRowXShift,200+ self.midRowYShift,75,50,0,190,0, "Caps", 15, 0,0,0)
+        
+        self.clearKey = Buttons (560 + self.midRowXShift,200+ self.midRowYShift,75,50,190,0,0, "Clear", 15, 0,0,0)
+        
+        self.spaceKey = Buttons (130+ self.botRowXShift,200+ self.botRowYShift + 60,200,50,100,100,100, "Space", 15, 0,0,0)
 
         self.keyArray = [self.qKey, self.wKey, self.eKey, self.rKey, self.tKey,
                          self.yKey, self.uKey, self.iKey, self.oKey, self.pKey,
-                         self.aKey,self.sKey,self.dKey,self.fKey,self.fKey,self.gKey,
+                         self.aKey,self.sKey,self.dKey,self.fKey,self.gKey,
                          self.hKey, self.jKey,self.kKey,self.lKey,self.zKey,self.xKey,
-                         self.cKey,self.vKey,self.bKey,self.nKey,self.mKey]
+                         self.cKey,self.vKey,self.bKey,self.nKey,self.mKey, self.spaceKey]
+        
+        self.functionKeyArray = [self.backKey, self.enterKey, self.capsKey,self.clearKey]
+        
+        self.lowerCaseArray = ["q", "w", "e", "r", "t", "y", "u", "i","o", "p",
+                               "a", "s", "d", "f", "g", "h", "j","k", "l",
+                               "z", "x", "c", "v", "b", "n", "m", " "]
+        
+        self.upperCaseArray = ["Q", "W", "E", "R", "T", "Y", "U", "I","O", "P",
+                               "A", "S", "D", "F", "G", "H", "J","K", "L",
+                               "Z", "X", "C", "V", "B", "N", "M", " "]
+        
+        self.isLowerCase = False
 
     def showKeys(self, screen):
 
         pygame.draw.rect(screen, (75,75,75), self.keyboardBackground)
+        
+        pygame.draw.rect(screen, (255,255,255), self.textBoxBackground)
 
         for key in self.keyArray:
             key.drawButton(screen)
+            key.isHoveredOver()
+            
+        for key in self.functionKeyArray:
+            key.drawButton(screen)
+            key.isHoveredOver()
+    
+            
+    def runKeyLogic(self, screen, mouseDown, word):
+        
+        if self.enterKey.isClicked(mouseDown):
+            return "To Numberpad"
+        
+        if self.backKey.isClicked(mouseDown):
+            word = word[:-1]
+        
+        if self.clearKey.isClicked(mouseDown):
+            word = ""
+            self.isLowerCase = False
+            self.capsKey.changeColor(0,190,0)  
+        
+        if self.capsKey.isClicked(mouseDown):
+            if self.isLowerCase == False:
+                self.isLowerCase = True
+                self.capsKey.changeColor(100,100,100)
+            else:
+                self.isLowerCase = False
+                self.capsKey.changeColor(0,190,0)      
+                
+        for key in self.keyArray:
+            if key.isClicked(mouseDown):
+                if self.isLowerCase:
+                    word = word + self.lowerCaseArray[self.keyArray.index(key)]
+                else:
+                    word = word + self.upperCaseArray[self.keyArray.index(key)]
+                    self.isLowerCase = True
+                    self.capsKey.changeColor(100,100,100)
+        
+        textRender = self.font.render(str(word), True, self.textRGB)
+        textRect = textRender.get_rect(center=(self.textBoxBackground.center))
+        screen.blit(textRender, textRect)
+        
+        return word
+            

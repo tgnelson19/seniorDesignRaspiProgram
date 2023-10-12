@@ -19,7 +19,6 @@ class ItemEntry:
         self.fontSize = 15
         self.font = pygame.font.Font("media/coolveticarg.otf", self.fontSize)
 
-        self.nameText = self.font.render(str(self.name), True, self.textRGB)
         self.expDateText = self.font.render("Exp: " + str(self.expDate), True, self.textRGB)
         self.quantityText = self.font.render("Count: " + str(self.quantity), True, self.textRGB)
         #self.entryNumText = self.font.render("#" + str(self.entryNum), True, self.textRGB)
@@ -37,8 +36,9 @@ class ItemEntry:
         #entryNumTextRect = self.entryNumText.get_rect(centery=entryBox.centery, left=anchX + 15)
         #screen.blit(self.entryNumText, entryNumTextRect)
 
-        nameTextRect = self.nameText.get_rect(centery=entryBox.centery, left=anchX + 20)
-        screen.blit(self.nameText, nameTextRect)
+        nameText = self.font.render(str(self.name), True, self.textRGB)
+        nameTextRect = nameText.get_rect(centery=entryBox.centery, left=anchX + 20)
+        screen.blit(nameText, nameTextRect)
 
         quantityTextRect = self.quantityText.get_rect(centery=entryBox.centery, left=anchX + 130)
         screen.blit(self.quantityText, quantityTextRect)
