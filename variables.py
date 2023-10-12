@@ -7,6 +7,7 @@ import firebase_admin
 from firebase_admin import db
 import json
 from datetime import date
+from keyboard import Keyboard
 
 
 
@@ -32,28 +33,37 @@ class Variables:
 
         #button makers (topleft x, toplefty, width, hieght, r ,g ,b, text string, font size, Tr, Tg, TB )
         
-        self.addExampleEntry = Buttons(580, 60, 160, 100, 100, 100, 100, "Add Entry", 25, 255, 255, 255)
+        self.addExampleEntry = Buttons(580, 40, 180, 100, 100, 100, 100, "Add Entry", 25, 255, 255, 255)
 
-        self.syncButton = Buttons(580, 180, 160, 50, 100, 100, 100, "Sync Data", 25, 255, 255, 255)
+        self.syncButton = Buttons(580, 160, 180, 50, 100, 100, 100, "Sync Data", 25, 255, 255, 255)
 
-        self.exitButton = Buttons(580, 380, 160, 40, 100,0,0, "Exit App", 25, 255, 255, 255)
+        self.exitButton = Buttons(580, 400, 180, 40, 100,0,0, "Exit App", 25, 255, 255, 255)
         
-        self.deleteallButton = Buttons(580, 250, 160, 40, 100,0,0, "Delete All", 25, 255, 255, 255)
+        self.deleteallButton = Buttons(580, 230, 180, 40, 100,0,0, "Delete All", 25, 255, 255, 255)
         
-        self.keypadButton = Buttons(240, 160,50,50, 20, 20, 20, "keypad", 25, 255, 255, 255)
+        
         
         #end of buttion maker 
 
 
         #button list
-        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton, self.deleteallButton,
-                           self.keypadButton]
+        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton, self.deleteallButton]
 
         self.entryList = []
 
         self.highestEntryNum = 0
 
         self.entryJustDeleted = False
+
+        self.currState = "Home"
+
+        self.currItemEdited = 0
+
+        self.keyboard = Keyboard()
+
+        self.editBackgroundBig = pygame.Rect(0, 0, 800, 480)  # Edit background
+
+        self.keypadAcceptButton = Buttons(700, 20,80,40, 0, 255, 0, "Save", 25, 0,0,0)
 
         #
         #
@@ -118,65 +128,93 @@ class Variables:
 
     #Updates the program (Done once per tick)
 
+
+
+
     def doAnUpdate(self):
-        self.background.drawMainBackground(
-            self.screen
-        )  # Draws the background first of everything
+
+        self.finishPaint()  # Paints whatever is desired from last frame on the screen
+
         self.eventHandler()  # Updates with any potential user interaction
 
+        if self.currState == "Edit":
 
-
-        if len(self.buttonList) != 0:
-
-            for button in self.buttonList:
-                button.isHoveredOver()
-                button.drawButton(self.screen)
-
-        if self.addExampleEntry.isClicked(self.mouseDown):
-            self.makeNewEntry()
-
-        if self.exitButton.isClicked(self.mouseDown):
-            self.done = True
             
-        if self.deleteallButton.isClicked(self.mouseDown):
-            self.entryList.clear()
-            with open("entries.json", "w") as f:
-                json.dump([], f, indent=2)
-            self.entriesJSON.clear()
+            pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
-        #if self.syncButton.isClicked(self.mouseDown):
-            #self.syncToDatabase()
+            self.currItemEdited.showItemInList(100, 50, self.screen)
 
-        if not self.mouseDown:
-            self.entryJustDeleted = False
+            self.keyboard.showKeys(self.screen)
 
-        for entry in self.entryList:
-            entry.entryButton.isHoveredOver()
-            if (
-                entry.entryButton.isClicked(self.mouseDown)
-                and not self.entryJustDeleted
-            ):
-                for jEntry in self.entriesJSON:
-                    if int(jEntry["EntryNum"]) == int(entry.entryNum):
-                        self.entriesJSON.remove(jEntry)
+            self.keypadAcceptButton.drawButton(self.screen)
 
+            if self.keypadAcceptButton.isClicked(self.mouseDown):
+                self.currState = "Home"
+
+
+        if self.currState == "Home":
+
+            self.background.drawMainBackground(self.screen)  # Draws the background first of everything
+
+            if len(self.buttonList) != 0:
+
+                for button in self.buttonList:
+                    button.isHoveredOver()
+                    button.drawButton(self.screen)
+
+            if self.addExampleEntry.isClicked(self.mouseDown):
+                self.makeNewEntry()
+
+            if self.exitButton.isClicked(self.mouseDown):
+                self.done = True
+                
+            if self.deleteallButton.isClicked(self.mouseDown):
+                self.entryList.clear()
                 with open("entries.json", "w") as f:
-                    json.dump(self.entriesJSON, f, indent=2)
+                    json.dump([], f, indent=2)
+                self.entriesJSON.clear()
 
-                self.entryList.remove(entry)
-                del entry
+            #if self.syncButton.isClicked(self.mouseDown):
+                #self.syncToDatabase()
 
-                self.entryJustDeleted = True
-
-        if len(self.entryList) != 0:
-            anchX = 60
-            anchY = 60
+            if not self.mouseDown:
+                self.entryJustDeleted = False
 
             for entry in self.entryList:
-                entry.showItemInList(anchX, anchY, self.screen)
-                anchY += 60
+                entry.editButton.isHoveredOver()
+                entry.entryButton.isHoveredOver()
 
-        self.finishPaint()  # Paints whatever is desired to be painted on the screen
+                if (entry.editButton.isClicked(self.mouseDown)):
+
+                    self.currState = "Edit"
+                    self.currItemEdited = entry
+
+                if (
+                    entry.entryButton.isClicked(self.mouseDown)
+                    and not self.entryJustDeleted
+                ):
+                    for jEntry in self.entriesJSON:
+                        if int(jEntry["EntryNum"]) == int(entry.entryNum):
+                            self.entriesJSON.remove(jEntry)
+
+                    with open("entries.json", "w") as f:
+                        json.dump(self.entriesJSON, f, indent=2)
+
+                    self.entryList.remove(entry)
+                    del entry
+
+                    self.entryJustDeleted = True
+
+            if len(self.entryList) != 0:
+                anchX = 40
+                anchY = 40
+
+                for entry in self.entryList:
+                    entry.showItemInList(anchX, anchY, self.screen)
+                    anchY += 60
+
+
+
 
     #Generates handler variables for event tracking
 

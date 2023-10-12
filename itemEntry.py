@@ -20,30 +20,35 @@ class ItemEntry:
         self.font = pygame.font.Font("media/coolveticarg.otf", self.fontSize)
 
         self.nameText = self.font.render(str(self.name), True, self.textRGB)
-        self.expDateText = self.font.render("Entered: " + str(self.expDate), True, self.textRGB)
+        self.expDateText = self.font.render("Exp: " + str(self.expDate), True, self.textRGB)
         self.quantityText = self.font.render("Count: " + str(self.quantity), True, self.textRGB)
-        self.entryNumText = self.font.render("#" + str(self.entryNum), True, self.textRGB)
+        #self.entryNumText = self.font.render("#" + str(self.entryNum), True, self.textRGB)
 
-        self.entryButton = Buttons(0, 0, 50, 30, 200, 25, 25, "Delete", 10, 0, 0, 0)
+        self.entryButton = Buttons(0, 0, 50, 30, 220, 25, 25, "Delete", 10, 0, 0, 0)
+
+        self.editButton = Buttons(0, 0, 50, 30, 100, 100, 100, "Edit", 10, 0, 0, 0)
 
 
     #Draws the current entry to the screen
     def showItemInList(self, anchX, anchY, screen):
-        entryBox = pygame.Rect(anchX, anchY, 460, 40)
+        entryBox = pygame.Rect(anchX, anchY, 480, 40)
         pygame.draw.rect(screen, (0, 0, 0), entryBox)
 
-        entryNumTextRect = self.entryNumText.get_rect(centery=entryBox.centery, left=anchX + 15)
-        screen.blit(self.entryNumText, entryNumTextRect)
+        #entryNumTextRect = self.entryNumText.get_rect(centery=entryBox.centery, left=anchX + 15)
+        #screen.blit(self.entryNumText, entryNumTextRect)
 
-        nameTextRect = self.nameText.get_rect(centery=entryBox.centery, left=anchX + 50)
+        nameTextRect = self.nameText.get_rect(centery=entryBox.centery, left=anchX + 20)
         screen.blit(self.nameText, nameTextRect)
 
-        quantityTextRect = self.quantityText.get_rect(centery=entryBox.centery, left=anchX + 150)
+        quantityTextRect = self.quantityText.get_rect(centery=entryBox.centery, left=anchX + 130)
         screen.blit(self.quantityText, quantityTextRect)
 
         expDateTextRect = self.expDateText.get_rect(centery=entryBox.centery, left=anchX + 250)
         screen.blit(self.expDateText, expDateTextRect)
 
         
-        self.entryButton.moveButton(anchX + 400, anchY + 5)
+        self.entryButton.moveButton(anchX + 420, anchY + 5)
         self.entryButton.drawButton(screen)
+
+        self.editButton.moveButton(anchX + 360, anchY + 5)
+        self.editButton.drawButton(screen)
