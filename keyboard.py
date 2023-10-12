@@ -15,11 +15,11 @@ class Keyboard:
         self.font = pygame.font.Font("media/coolveticarg.otf", self.fontSize)
         
 
-        self.topRowXShift = 20 + 100
+        self.topRowXShift = 20 + 60
         self.topRowYShift = 0 
-        self.midRowXShift = 35 + 100
+        self.midRowXShift = 35 + 60
         self.midRowYShift = 60 
-        self.botRowXShift = 60 + 100
+        self.botRowXShift = 60 + 60
         self.botRowYShift = 120 
 
         self.qKey = Buttons (20 + self.topRowXShift,200 + self.topRowYShift,50,50,100,100,100, "Q", 15, 0,0,0)
@@ -51,13 +51,13 @@ class Keyboard:
         self.nKey = Buttons (320+ self.botRowXShift,200+ self.botRowYShift,50,50,100,100,100, "N", 15, 0,0,0)
         self.mKey = Buttons (380+ self.botRowXShift,200+ self.botRowYShift,50,50,100,100,100, "M", 15, 0,0,0)
         
-        self.backKey = Buttons (440 + self.botRowXShift,200+ self.botRowYShift,100,50,190,0,0, "<==", 15, 0,0,0)
+        self.backKey = Buttons (620 + self.topRowXShift,200+ self.topRowYShift,75,50,190,0,0, "<==", 15, 0,0,0)
         
-        self.enterKey = Buttons (-90 + self.botRowXShift,200+ self.botRowYShift,100,50,0,190,0, "Next", 15, 0,0,0)
+        self.enterKey = Buttons (560 + self.midRowXShift,200+ self.midRowYShift,100,50,0,190,0, "Next", 15, 0,0,0)
         
         self.capsKey = Buttons (-65 + self.midRowXShift,200+ self.midRowYShift,75,50,0,190,0, "Caps", 15, 0,0,0)
         
-        self.clearKey = Buttons (560 + self.midRowXShift,200+ self.midRowYShift,75,50,190,0,0, "Clear", 15, 0,0,0)
+        self.clearKey = Buttons (440 + self.botRowXShift,200+ self.botRowYShift,75,50,190,0,0, "Clear", 15, 0,0,0)
         
         self.spaceKey = Buttons (130+ self.botRowXShift,200+ self.botRowYShift + 60,200,50,100,100,100, "Space", 15, 0,0,0)
 

@@ -19,8 +19,7 @@ class ItemEntry:
         self.fontSize = 15
         self.font = pygame.font.Font("media/coolveticarg.otf", self.fontSize)
 
-        self.expDateText = self.font.render("Exp: " + str(self.expDate), True, self.textRGB)
-        self.quantityText = self.font.render("Count: " + str(self.quantity), True, self.textRGB)
+        
         #self.entryNumText = self.font.render("#" + str(self.entryNum), True, self.textRGB)
 
         self.entryButton = Buttons(0, 0, 50, 30, 220, 25, 25, "Delete", 10, 0, 0, 0)
@@ -40,11 +39,14 @@ class ItemEntry:
         nameTextRect = nameText.get_rect(centery=entryBox.centery, left=anchX + 20)
         screen.blit(nameText, nameTextRect)
 
-        quantityTextRect = self.quantityText.get_rect(centery=entryBox.centery, left=anchX + 130)
-        screen.blit(self.quantityText, quantityTextRect)
+        
+        quantityText = self.font.render("Count: " + str(self.quantity), True, self.textRGB)
+        quantityTextRect = quantityText.get_rect(centery=entryBox.centery, left=anchX + 130)
+        screen.blit(quantityText, quantityTextRect)
 
-        expDateTextRect = self.expDateText.get_rect(centery=entryBox.centery, left=anchX + 250)
-        screen.blit(self.expDateText, expDateTextRect)
+        expDateText = self.font.render("Exp: " + str(self.expDate), True, self.textRGB)
+        expDateTextRect = expDateText.get_rect(centery=entryBox.centery, left=anchX + 250)
+        screen.blit(expDateText, expDateTextRect)
 
         
         self.entryButton.moveButton(anchX + 420, anchY + 5)

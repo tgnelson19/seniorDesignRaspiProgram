@@ -8,6 +8,7 @@ from firebase_admin import db
 import json
 from datetime import date
 from keyboard import Keyboard
+from pinpad import Pinpad
 
 
 
@@ -58,6 +59,8 @@ class Variables:
         self.currState = "Home"
 
         self.currItemEdited = 0
+
+        self.pinpad = Pinpad()
 
         self.keyboard = Keyboard()
 
@@ -137,7 +140,7 @@ class Variables:
 
         self.eventHandler()  # Updates with any potential user interaction
 
-        if self.currState == "Edit":
+        if self.currState == "Edit Name":
 
             
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
@@ -149,18 +152,56 @@ class Variables:
             self.keypadAcceptButton.drawButton(self.screen)
             
             
-            
-            
-            
-            
             temp = self.keyboard.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.name)
             
             if temp == "To Numberpad":
-                self.currState = "Home"
+                self.currState = "Edit Count"
             else:
                 self.currItemEdited.name = temp
             
+            self.keypadAcceptButton.isHoveredOver()
+            if self.keypadAcceptButton.isClicked(self.mouseDown):
+                self.currState = "Home"
 
+        if self.currState == "Edit Count":
+
+            pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
+
+            self.currItemEdited.showItemInList(160, 50, self.screen)
+
+            self.pinpad.showKeys(self.screen)
+
+            self.keypadAcceptButton.drawButton(self.screen)
+
+            temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.quantity)
+            
+            if temp == "To NumberpadTwo":
+                self.currState = "Edit Date"
+            else:
+                self.currItemEdited.quantity = temp
+            
+            self.keypadAcceptButton.isHoveredOver()
+            if self.keypadAcceptButton.isClicked(self.mouseDown):
+                self.currState = "Home"
+
+        if self.currState == "Edit Date":
+
+            pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
+
+            self.currItemEdited.showItemInList(160, 50, self.screen)
+
+            self.pinpad.showKeys(self.screen)
+
+            self.keypadAcceptButton.drawButton(self.screen)
+
+            temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.expDate)
+            
+            if temp == "Exiting Editing":
+                self.currState = "Home"
+            else:
+                self.currItemEdited.expDate = temp
+            
+            self.keypadAcceptButton.isHoveredOver()
             if self.keypadAcceptButton.isClicked(self.mouseDown):
                 self.currState = "Home"
 
@@ -199,7 +240,7 @@ class Variables:
 
                 if (entry.editButton.isClicked(self.mouseDown)):
 
-                    self.currState = "Edit"
+                    self.currState = "Edit Name"
                     self.currItemEdited = entry
 
                 if (
