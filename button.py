@@ -54,6 +54,10 @@ class Buttons:
         self.textRect = self.textRender.get_rect(
             center=(self.buttonRect.centerx, self.buttonRect.centery)
         )
+        
+    def changeColor(self,R,G,B):
+        self.buttonRGB = (R,G,B)
+        
 
 
     #Does an action if the button is hovered over (Mouse only)

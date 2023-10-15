@@ -7,6 +7,8 @@ import firebase_admin
 from firebase_admin import db
 import json
 from datetime import date
+from keyboard import Keyboard
+from pinpad import Pinpad
 
 
 
@@ -29,19 +31,42 @@ class Variables:
 
         self.background = Background()
 
-        self.addExampleEntry = Buttons(580, 60, 160, 100, 100, 100, 100, "Add Entry", 25, 255, 255, 255)
 
-        self.syncButton = Buttons(580, 180, 160, 50, 100, 100, 100, "Sync Data", 25, 255, 255, 255)
+        #button makers (topleft x, toplefty, width, hieght, r ,g ,b, text string, font size, Tr, Tg, TB )
+        
+        self.addExampleEntry = Buttons(580, 40, 180, 100, 100, 100, 100, "Add Entry", 25, 255, 255, 255)
 
-        self.exitButton = Buttons(580, 380, 160, 40, 100,0,0, "Exit App", 25, 255, 255, 255)
+        self.syncButton = Buttons(580, 160, 180, 50, 100, 100, 100, "Sync Data", 25, 255, 255, 255)
 
-        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton]
+        self.exitButton = Buttons(580, 400, 180, 40, 100,0,0, "Exit App", 25, 255, 255, 255)
+        
+        self.deleteallButton = Buttons(580, 230, 180, 40, 100,0,0, "Delete All", 25, 255, 255, 255)
+        
+        
+        
+        #end of buttion maker 
+
+
+        #button list
+        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton, self.deleteallButton]
 
         self.entryList = []
 
         self.highestEntryNum = 0
 
         self.entryJustDeleted = False
+
+        self.currState = "Home"
+
+        self.currItemEdited = 0
+
+        self.pinpad = Pinpad()
+
+        self.keyboard = Keyboard()
+
+        self.editBackgroundBig = pygame.Rect(0, 0, 800, 480)  # Edit background
+
+        self.keypadAcceptButton = Buttons(700, 20,80,40, 0, 255, 0, "Save", 25, 0,0,0)
 
         #
         #
@@ -106,59 +131,144 @@ class Variables:
 
     #Updates the program (Done once per tick)
 
+
+
+
     def doAnUpdate(self):
-        self.background.drawMainBackground(
-            self.screen
-        )  # Draws the background first of everything
+
+        self.finishPaint()  # Paints whatever is desired from last frame on the screen
+
         self.eventHandler()  # Updates with any potential user interaction
 
+        if self.currState == "Edit Name":
+
+            
+            pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
+
+            self.currItemEdited.showItemInList(160, 50, self.screen)
+
+            self.keyboard.showKeys(self.screen)
+
+            self.keypadAcceptButton.drawButton(self.screen)
+            
+            
+            temp = self.keyboard.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.name)
+            
+            if temp == "To Numberpad":
+                self.currState = "Edit Count"
+            else:
+                self.currItemEdited.name = temp
+            
+            self.keypadAcceptButton.isHoveredOver()
+            if self.keypadAcceptButton.isClicked(self.mouseDown):
+                self.currState = "Home"
+
+        if self.currState == "Edit Count":
+
+            pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
+
+            self.currItemEdited.showItemInList(160, 50, self.screen)
+
+            self.pinpad.showKeys(self.screen)
+
+            self.keypadAcceptButton.drawButton(self.screen)
+
+            temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.quantity)
+            
+            if temp == "To NumberpadTwo":
+                self.currState = "Edit Date"
+            else:
+                self.currItemEdited.quantity = temp
+            
+            self.keypadAcceptButton.isHoveredOver()
+            if self.keypadAcceptButton.isClicked(self.mouseDown):
+                self.currState = "Home"
+
+        if self.currState == "Edit Date":
+
+            pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
+
+            self.currItemEdited.showItemInList(160, 50, self.screen)
+
+            self.pinpad.showKeys(self.screen)
+
+            self.keypadAcceptButton.drawButton(self.screen)
+
+            temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.expDate)
+            
+            if temp == "Exiting Editing":
+                self.currState = "Home"
+            else:
+                self.currItemEdited.expDate = temp
+            
+            self.keypadAcceptButton.isHoveredOver()
+            if self.keypadAcceptButton.isClicked(self.mouseDown):
+                self.currState = "Home"
 
 
-        if len(self.buttonList) != 0:
+        if self.currState == "Home":
 
-            for button in self.buttonList:
-                button.isHoveredOver()
-                button.drawButton(self.screen)
+            self.background.drawMainBackground(self.screen)  # Draws the background first of everything
 
-        if self.addExampleEntry.isClicked(self.mouseDown):
-            self.makeNewEntry()
+            if len(self.buttonList) != 0:
 
-        if self.exitButton.isClicked(self.mouseDown):
-            self.done = True
+                for button in self.buttonList:
+                    button.isHoveredOver()
+                    button.drawButton(self.screen)
 
-        #if self.syncButton.isClicked(self.mouseDown):
-            #self.syncToDatabase()
+            if self.addExampleEntry.isClicked(self.mouseDown):
+                self.makeNewEntry()
 
-        if not self.mouseDown:
-            self.entryJustDeleted = False
-
-        for entry in self.entryList:
-            entry.entryButton.isHoveredOver()
-            if (
-                entry.entryButton.isClicked(self.mouseDown)
-                and not self.entryJustDeleted
-            ):
-                for jEntry in self.entriesJSON:
-                    if int(jEntry["EntryNum"]) == int(entry.entryNum):
-                        self.entriesJSON.remove(jEntry)
-
+            if self.exitButton.isClicked(self.mouseDown):
+                self.done = True
+                
+            if self.deleteallButton.isClicked(self.mouseDown):
+                self.entryList.clear()
                 with open("entries.json", "w") as f:
-                    json.dump(self.entriesJSON, f, indent=2)
+                    json.dump([], f, indent=2)
+                self.entriesJSON.clear()
 
-                self.entryList.remove(entry)
-                del entry
+            #if self.syncButton.isClicked(self.mouseDown):
+                #self.syncToDatabase()
 
-                self.entryJustDeleted = True
-
-        if len(self.entryList) != 0:
-            anchX = 60
-            anchY = 60
+            if not self.mouseDown:
+                self.entryJustDeleted = False
 
             for entry in self.entryList:
-                entry.showItemInList(anchX, anchY, self.screen)
-                anchY += 60
+                entry.editButton.isHoveredOver()
+                entry.entryButton.isHoveredOver()
 
-        self.finishPaint()  # Paints whatever is desired to be painted on the screen
+                if (entry.editButton.isClicked(self.mouseDown)):
+
+                    self.currState = "Edit Name"
+                    self.currItemEdited = entry
+
+                if (
+                    entry.entryButton.isClicked(self.mouseDown)
+                    and not self.entryJustDeleted
+                ):
+                    for jEntry in self.entriesJSON:
+                        if int(jEntry["EntryNum"]) == int(entry.entryNum):
+                            self.entriesJSON.remove(jEntry)
+
+                    with open("entries.json", "w") as f:
+                        json.dump(self.entriesJSON, f, indent=2)
+
+                    self.entryList.remove(entry)
+                    del entry
+
+                    self.entryJustDeleted = True
+
+            if len(self.entryList) != 0:
+                anchX = 40
+                anchY = 40
+
+                for entry in self.entryList:
+                    entry.showItemInList(anchX, anchY, self.screen)
+                    anchY += 60
+
+
+
 
     #Generates handler variables for event tracking
 
