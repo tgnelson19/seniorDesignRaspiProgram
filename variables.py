@@ -10,7 +10,6 @@ from datetime import date
 
 
 
-
 class Variables:
     def __init__(self):
         pygame.init()  # Initializes a window

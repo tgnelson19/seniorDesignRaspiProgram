@@ -1,5 +1,5 @@
 import pygame
-
+ 
 
 class Buttons:
     
@@ -83,3 +83,4 @@ class Buttons:
         else:
             self.canBeClickedAgain = True
             return False
+
