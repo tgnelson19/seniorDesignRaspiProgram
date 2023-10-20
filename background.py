@@ -4,8 +4,8 @@ class Background:
     def __init__(self):
         #self.bigBackBackground = pygame.Rect(0, 0, 800, 480)  # Background Color Block
         self.frontUIBackground = pygame.Rect(0, 0, 800, 480)  # Foreground Background Color Block
-        self.leftUIFrame = pygame.Rect(40, 40, 500, 400)  # The left UI frame
-        self.rightUIFrame = pygame.Rect(560, 40, 200, 400)  # The right UI frame
+        self.leftUIFrame = pygame.Rect(20, 20, 520, 440)  # The left UI frame
+        self.rightUIFrame = pygame.Rect(560, 20, 220, 440)  # The right UI frame
         
 
     def drawMainBackground(self, screen):
