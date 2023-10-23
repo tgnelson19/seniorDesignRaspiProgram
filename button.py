@@ -3,38 +3,38 @@ import pygame
 
 class Buttons:
     
-    
+    """
+    This class represents a button in pygame.
+    It provides methods to display, move and detect interactions with the button.
+    """
+        
     #Initializer
-    def __init__(
-        self,
-        topLeftX,
-        topLeftY,
-        width,
-        height,
-        R,
-        G,
-        B,
-        text,
-        fontSize,
-        textR,
-        textG,
-        textB,
-    ):
+    def __init__(self, topLeftX, topLeftY, width, height, R, G, B, text, fontSize, textR, textG, textB):
+        """
+        Intializes the buton with specified properties.
+        """
+        # Position of the button
         self.posX = topLeftX
         self.posY = topLeftY
 
+        # Dimentsions of the button
         self.width = width
         self.height = height
 
+        # Rectangle object representing the button's positon and size
         self.buttonRect = pygame.Rect(topLeftX, topLeftY, width, height)
+        # Color of the button
         self.buttonRGB = (R, G, B)
+        # To prvent multiple click detections for a single click
         self.canBeClickedAgain = True
-
+        # Text attributes for display on the button
         self.textRGB = (textR, textG, textB)
         self.text = text
         self.fontSize = fontSize
+        # Font for the text and its rendering
         self.font = pygame.font.Font("media/coolveticarg.otf", self.fontSize)
         self.textRender = self.font.render(str(self.text), True, self.textRGB)
+        # Positioning the text at the center of the button
         self.textRect = self.textRender.get_rect(
             center=(self.buttonRect.centerx, self.buttonRect.centery)
         )
