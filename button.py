@@ -40,12 +40,12 @@ class Buttons:
         )
 
 
-    #Draws the button to the screen
+    # Draws the button to the screen.
     def drawButton(self, screen):
         pygame.draw.rect(screen, self.buttonRGB, self.buttonRect)
         screen.blit(self.textRender, self.textRect)
 
-    #Moves the button to a designated x adn y coordinate
+    # Moves the button to a designated x adn y coordinate.
     def moveButton(self, x, y):
         self.posX = x
         self.posY = y
@@ -54,15 +54,15 @@ class Buttons:
         self.textRect = self.textRender.get_rect(
             center=(self.buttonRect.centerx, self.buttonRect.centery)
         )
-        
+    # Change the color of the button.    
     def changeColor(self,R,G,B):
         self.buttonRGB = (R,G,B)
         
 
 
-    #Does an action if the button is hovered over (Mouse only)
+    # Does an action if the button is hovered over (Mouse only).
     def isHoveredOver(self):
-        scaler = 1.05
+        scaler = 1.15
         mouseX, mouseY = pygame.mouse.get_pos()
         if self.buttonRect.collidepoint(mouseX, mouseY):
             leftGap = (self.buttonRect.width * scaler - self.buttonRect.width) / 2
@@ -77,7 +77,7 @@ class Buttons:
             self.buttonRect = pygame.Rect(self.posX, self.posY, self.width, self.height)
 
 
-    #Determines if the button has been clicked
+    # Determines if the button has been clicked.
     def isClicked(self, mouseDown):
         mouseX, mouseY = pygame.mouse.get_pos()
         if mouseDown:
