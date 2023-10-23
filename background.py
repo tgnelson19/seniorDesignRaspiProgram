@@ -11,5 +11,8 @@ class Background:
     def drawMainBackground(self, screen):
        # pygame.draw.rect(screen, (40, 40, 40), self.bigBackBackground)
         pygame.draw.rect(screen, (255, 0, 255), self.frontUIBackground)
-        pygame.draw.rect(screen, (200, 200, 200), self.leftUIFrame)
-        pygame.draw.rect(screen, (200, 200, 200), self.rightUIFrame)
+        #pygame.draw.rect(screen, (200, 200, 200), self.leftUIFrame) # light Gray
+        #pygame.draw.rect(screen, (200, 200, 200), self.rightUIFrame)
+        #change the left and right frames color form light gray to Teal
+        pygame.draw.rect(screen, (0, 128, 128), self.leftUIFrame)
+        pygame.draw.rect(screen, (0, 128, 128), self.rightUIFrame)
