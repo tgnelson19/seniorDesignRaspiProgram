@@ -87,4 +87,3 @@ class Buttons:
         else:
             self.canBeClickedAgain = True
             return False
-
