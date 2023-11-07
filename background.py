@@ -10,6 +10,6 @@ class Background:
 
     def drawMainBackground(self, screen):
         #pygame.draw.rect(screen, (40, 40, 40), self.bigBackBackground)
-        pygame.draw.rect(screen, (200, 200, 50), self.frontUIBackground)
-        pygame.draw.rect(screen, (200, 200, 200), self.leftUIFrame)
-        pygame.draw.rect(screen, (200, 200, 200), self.rightUIFrame)
+        pygame.draw.rect(screen, (150, 200, 250), self.frontUIBackground)
+        pygame.draw.rect(screen, (250, 250, 150), self.leftUIFrame)
+        pygame.draw.rect(screen, (250, 250, 150), self.rightUIFrame)

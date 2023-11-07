@@ -33,15 +33,13 @@ class Variables:
 
         #button makers (topleft x, toplefty, width, hieght, r ,g ,b, text string, font size, Tr, Tg, TB )
         
-        self.addExampleEntry = Buttons(580, 40, 180, 100, 100, 100, 100, "Add Entry", 25, 255, 255, 255)
+        self.addExampleEntry = Buttons(580, 40, 180, 100, 10, 100, 10, "Add Entry", 25, 255, 255, 255)
 
-        self.syncButton = Buttons(580, 160, 180, 50, 100, 100, 100, "Sync Data", 25, 255, 255, 255)
+        self.syncButton = Buttons(580, 160, 180, 50, 10, 10, 100, "Sync Data", 25, 255, 255, 255)
 
-        self.exitButton = Buttons(580, 400, 180, 40, 100,0,0, "Exit App", 25, 255, 255, 255)
+        self.exitButton = Buttons(580, 400, 180, 40, 200,0,0, "Exit App", 25, 255, 255, 255)
         
-        self.deleteallButton = Buttons(580, 230, 180, 40, 100,0,0, "Delete All", 25, 255, 255, 255)
-        
-        
+        self.deleteallButton = Buttons(580, 230, 180, 40, 200,0,0, "Delete All", 25, 255, 255, 255)
         
         #end of buttion maker 
 
