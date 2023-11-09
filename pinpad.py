@@ -19,7 +19,6 @@ class Pinpad:
 
         self.countOrMonth = "Count = "
 
-
         self.SevenKey = Buttons(self.keypadTopLeftX,self.keypadTopLeftY,50,50,100,100,100, "7", self.keyFontSize, 0,0,0)
         self.EightKey = Buttons(self.keypadTopLeftX + self.keySize + self.keySpacing,self.keypadTopLeftY,50,50,100,100,100, "8", self.keyFontSize, 0,0,0)
         self.NineKey = Buttons(self.keypadTopLeftX + self.keySize*2 + self.keySpacing*2,self.keypadTopLeftY,50,50,100,100,100, "9", self.keyFontSize, 0,0,0)
@@ -41,7 +40,6 @@ class Pinpad:
                          self.ZeroKey, self.SlashKey]
         
         self.keyNumbers = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "/"]
-
 
 
     def showKeys(self, screen):
@@ -91,5 +89,3 @@ class Pinpad:
         screen.blit(textRender, textRect)
         
         return word
-
-        
