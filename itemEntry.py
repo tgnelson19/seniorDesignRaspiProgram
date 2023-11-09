@@ -24,7 +24,7 @@ class ItemEntry:
 
         self.entryButton = Buttons(0, 0, 50, 30, 220, 25, 25, "Delete", 10, 0, 0, 0)
 
-        self.editButton = Buttons(0, 0, 50, 30, 100, 100, 100, "Edit", 10, 0, 0, 0)
+        self.editButton = Buttons(0, 0, 50, 30, 250, 250, 250, "Edit", 10, 0, 0, 0)
 
 
     #Draws the current entry to the screen
