@@ -7,13 +7,13 @@ class ItemEntry:
     
     #Initializer
     def __init__(
-        self, entryNum="0", name="Default", quantity="0", expDate="00/00/0000"
+        self, entryNum="0", name="Default", entryDate="00/00/0000", expDate="00/00/0000"
     ):
         self.entryNum = entryNum
         self.name = name
+        self.entryDate = entryDate
         self.expDate = expDate
-        self.quantity = quantity
-
+        
         self.textRGB = (255, 255, 255)
 
         self.fontSize = 15
@@ -40,12 +40,12 @@ class ItemEntry:
         screen.blit(nameText, nameTextRect)
 
         
-        quantityText = self.font.render("Count: " + str(self.quantity), True, self.textRGB)
-        quantityTextRect = quantityText.get_rect(centery=entryBox.centery, left=anchX + 130)
-        screen.blit(quantityText, quantityTextRect)
+        entryDateText = self.font.render("Entry Date: " + str(self.entryDate), True, self.textRGB)
+        entryDateTextRect = entryDateText.get_rect(centery=entryBox.centery, left=anchX + 90)
+        screen.blit(entryDateText, entryDateTextRect)
 
-        expDateText = self.font.render("Exp: " + str(self.expDate), True, self.textRGB)
-        expDateTextRect = expDateText.get_rect(centery=entryBox.centery, left=anchX + 250)
+        expDateText = self.font.render("Exp. Date: " + str(self.expDate), True, self.textRGB)
+        expDateTextRect = expDateText.get_rect(centery=entryBox.centery, left=anchX + 230)
         screen.blit(expDateText, expDateTextRect)
 
         

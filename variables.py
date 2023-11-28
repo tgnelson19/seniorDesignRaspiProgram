@@ -37,10 +37,12 @@ class Variables:
         self.addExampleEntry = Buttons(580, 40, 180, 100, 100, 100, 100, "Add Entry", 25, 255, 255, 255)
 
         self.syncButton = Buttons(580, 160, 180, 50, 100, 100, 100, "Sync Data", 25, 255, 255, 255)
+        
+        self.objectDetectButton = Buttons(580, 230, 180, 50, 100, 100, 100, "Object Detect", 25, 255, 255, 255)
 
         self.exitButton = Buttons(580, 400, 180, 40, 100,0,0, "Exit App", 25, 255, 255, 255)
         
-        self.deleteallButton = Buttons(580, 230, 180, 40, 100,0,0, "Delete All", 25, 255, 255, 255)
+        self.deleteallButton = Buttons(580, 300, 180, 40, 100,0,0, "Delete All", 25, 255, 255, 255)
         
         
         
@@ -48,7 +50,7 @@ class Variables:
 
 
         #button list
-        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton, self.deleteallButton]
+        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton, self.deleteallButton, self.objectDetectButton]
 
         self.entryList = []
 
@@ -57,6 +59,8 @@ class Variables:
         self.entryJustDeleted = False
 
         self.currState = "Home"
+        
+        self.showPic = False
 
         self.currItemEdited = 0
 
@@ -65,8 +69,14 @@ class Variables:
         self.keyboard = Keyboard()
 
         self.editBackgroundBig = pygame.Rect(0, 0, 800, 480)  # Edit background
+        
+        self.blockEdits = pygame.Rect(520, 50, 110, 40)  # Edit background
 
         self.keypadAcceptButton = Buttons(700, 20,80,40, 0, 255, 0, "Save", 25, 0,0,0)
+        
+        self.imp = pygame.image.load("media/screenie.png").convert()
+        
+        self.imp = pygame.transform.scale(self.imp, (480,320))
 
         #
         #
@@ -86,7 +96,7 @@ class Variables:
 
             self.entryList.append(
                 ItemEntry(
-                    item["EntryNum"], item["Name"], item["Quantity"], item["Expiration"]
+                    item["EntryNum"], item["Name"], item["EntryDate"], item["ExpirationDate"]
                 )
             )
 
@@ -99,15 +109,15 @@ class Variables:
         formattedDate = today.strftime("%m/%d/%y")
 
         self.highestEntryNum = self.highestEntryNum + 1
-        newEntry = ItemEntry(str(self.highestEntryNum),"Default", "0", str(formattedDate))
+        newEntry = ItemEntry(str(self.highestEntryNum),"Default", str(formattedDate), str(formattedDate))
         self.entryList.append(newEntry)
 
         self.entriesJSON.append(
             {
                 "EntryNum": newEntry.entryNum,
                 "Name": newEntry.name,
-                "Quantity": newEntry.quantity,
-                "Expiration": newEntry.expDate,
+                "EntryDate": newEntry.entryDate,
+                "ExpirationDate": newEntry.expDate,
             }
         )
 
@@ -146,6 +156,8 @@ class Variables:
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
             self.currItemEdited.showItemInList(160, 50, self.screen)
+            
+            pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
 
             self.keyboard.showKeys(self.screen)
 
@@ -155,7 +167,7 @@ class Variables:
             temp = self.keyboard.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.name)
             
             if temp == "To Numberpad":
-                self.currState = "Edit Count"
+                self.currState = "Edit Entry"
             else:
                 self.currItemEdited.name = temp
             
@@ -163,7 +175,7 @@ class Variables:
             if self.keypadAcceptButton.isClicked(self.mouseDown):
                 self.currState = "Home"
 
-        if self.currState == "Edit Count":
+        if self.currState == "Edit Entry":
 
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
@@ -173,18 +185,18 @@ class Variables:
 
             self.keypadAcceptButton.drawButton(self.screen)
 
-            temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.quantity)
+            temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.entryDate)
             
             if temp == "To NumberpadTwo":
-                self.currState = "Edit Date"
+                self.currState = "Edit Exp"
             else:
-                self.currItemEdited.quantity = temp
+                self.currItemEdited.entryDate = temp
             
             self.keypadAcceptButton.isHoveredOver()
             if self.keypadAcceptButton.isClicked(self.mouseDown):
                 self.currState = "Home"
 
-        if self.currState == "Edit Date":
+        if self.currState == "Edit Exp":
 
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
@@ -222,6 +234,12 @@ class Variables:
             if self.exitButton.isClicked(self.mouseDown):
                 self.done = True
                 
+            if self.objectDetectButton.isClicked(self.mouseDown):
+                if self.showPic == True:
+                    self.showPic = False
+                else:
+                    self.showPic = True
+            
             if self.deleteallButton.isClicked(self.mouseDown):
                 self.entryList.clear()
                 with open("entries.json", "w") as f:
@@ -266,6 +284,10 @@ class Variables:
                 for entry in self.entryList:
                     entry.showItemInList(anchX, anchY, self.screen)
                     anchY += 60
+                    
+                    
+            if self.showPic == True:
+                self.screen.blit(self.imp, (170, 70))
 
 
 

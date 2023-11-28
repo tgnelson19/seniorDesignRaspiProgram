@@ -1,38 +1,20 @@
 [
   {
-    "EntryNum": "10",
+    "EntryNum": "22",
     "Name": "Default",
-    "Quantity": "0",
-    "Expiration": "10/12/23"
+    "EntryDate": "11/27/23",
+    "ExpirationDate": "11/27/23"
   },
   {
-    "EntryNum": "11",
+    "EntryNum": "28",
     "Name": "Default",
-    "Quantity": "0",
-    "Expiration": "10/12/23"
+    "EntryDate": "11/27/23",
+    "ExpirationDate": "11/27/23"
   },
   {
-    "EntryNum": "12",
+    "EntryNum": "29",
     "Name": "Default",
-    "Quantity": "0",
-    "Expiration": "11/26/23"
-  },
-  {
-    "EntryNum": "13",
-    "Name": "Default",
-    "Quantity": "0",
-    "Expiration": "11/26/23"
-  },
-  {
-    "EntryNum": "14",
-    "Name": "Default",
-    "Quantity": "0",
-    "Expiration": "11/26/23"
-  },
-  {
-    "EntryNum": "15",
-    "Name": "Default",
-    "Quantity": "0",
-    "Expiration": "11/26/23"
+    "EntryDate": "11/27/23",
+    "ExpirationDate": "11/27/23"
   }
 ]

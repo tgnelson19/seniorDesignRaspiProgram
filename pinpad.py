@@ -10,14 +10,14 @@ class Pinpad:
         self.fontSize = 30
         self.font = pygame.font.Font("media/coolveticarg.otf", self.fontSize)
 
-        self.keypadTopLeftX = 200
+        self.keypadTopLeftX = 300
         self.keypadTopLeftY = 200
 
         self.keySize = 60
         self.keyFontSize = 15
         self.keySpacing = 10
 
-        self.countOrMonth = "Count = "
+        self.entryOrExpiration = "Entry Date = "
 
 
         self.SevenKey = Buttons(self.keypadTopLeftX,self.keypadTopLeftY,50,50,100,100,100, "7", self.keyFontSize, 0,0,0)
@@ -65,12 +65,12 @@ class Pinpad:
 
         if self.EnterKey.isClicked(mouseDown):
 
-            if self.countOrMonth == "Count = ":
-                self.countOrMonth = "Exp. Date = "
+            if self.entryOrExpiration == "Entry Date = ":
+                self.entryOrExpiration = "Exp. Date = "
                 return "To NumberpadTwo"
             
             else:
-                self.countOrMonth = "Count = "
+                self.entryOrExpiration = "Entry Date = "
                 return "Exiting Editing"
             
         if self.ClearKey.isClicked(mouseDown):
@@ -86,7 +86,7 @@ class Pinpad:
                 word = word + self.keyNumbers[self.keyArray.index(key)]
 
 
-        textRender = self.font.render(self.countOrMonth + str(word), True, self.textRGB)
+        textRender = self.font.render(self.entryOrExpiration + str(word), True, self.textRGB)
         textRect = textRender.get_rect(center=(self.textBoxBackground.center))
         screen.blit(textRender, textRect)
         
