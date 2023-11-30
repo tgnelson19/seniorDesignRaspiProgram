@@ -1,4 +1,6 @@
 import pygame
+import pygame.camera
+import pygame.image
 from background import Background
 from button import Buttons
 from itemEntry import ItemEntry
@@ -17,6 +19,8 @@ class Variables:
     def __init__(self):
         pygame.init()  # Initializes a window
 
+        pygame.display.set_caption("Raspberry Pi Software")
+
         self.sW, self.sH = (800,480)  # Determines (s)creen (W)idth, and (s)creen (H)eigth
 
         self.clock = pygame.time.Clock()  # Main time keeper
@@ -27,7 +31,19 @@ class Variables:
         self.fontSize = 30
         self.font = pygame.font.Font("media/coolveticarg.otf", self.fontSize)
 
-        self.screen = pygame.display.set_mode([self.sW, self.sH])  # Makes a screen that's that wide
+        self.screen = pygame.display.set_mode([self.sW, self.sH], pygame.NOFRAME)  # Makes a screen that's that wide
+
+        pygame.camera.init()
+
+        cameras = pygame.camera.list_cameras()
+
+        self.webcam = pygame.camera.Camera(cameras[0], (480, 320))
+
+        self.webcam.start()
+
+        self.webcam.set_controls(hflip = True, vflip = False)
+
+        self.snapshot = pygame.surface.Surface((480,320), 0, self.screen)
 
         self.background = Background()
 
@@ -72,11 +88,11 @@ class Variables:
         
         self.blockEdits = pygame.Rect(520, 50, 110, 40)  # Edit background
 
+        self.backgroundOfCamera = pygame.Rect(150, 50, 520, 400)  # Edit background of camera
+
         self.keypadAcceptButton = Buttons(700, 20,80,40, 0, 255, 0, "Save", 25, 0,0,0)
-        
-        self.imp = pygame.image.load("media/screenie.png").convert()
-        
-        self.imp = pygame.transform.scale(self.imp, (480,320))
+
+        self.takePictureButton = Buttons(275, 400,250,30, 20,20,20, "Take Picture", 25, 255,255,255)
 
         #
         #
@@ -235,9 +251,6 @@ class Variables:
                 self.done = True
                 
             if self.objectDetectButton.isClicked(self.mouseDown):
-                if self.showPic == True:
-                    self.showPic = False
-                else:
                     self.showPic = True
             
             if self.deleteallButton.isClicked(self.mouseDown):
@@ -287,7 +300,18 @@ class Variables:
                     
                     
             if self.showPic == True:
-                self.screen.blit(self.imp, (170, 70))
+                pygame.draw.rect(self.screen, (50,50,50), self.backgroundOfCamera)
+                self.takePictureButton.isHoveredOver()
+                self.takePictureButton.drawButton(self.screen)
+                
+                if self.webcam.query_image():
+                    self.snapshot = self.webcam.get_image(self.snapshot)
+
+                self.screen.blit(self.snapshot, (170, 70))
+
+                if(self.takePictureButton.isClicked(self.mouseDown)):
+                    pygame.image.save(self.snapshot, "media/screenie.png")
+                    self.showPic = False
 
 
 
@@ -315,3 +339,4 @@ class Variables:
     def finishPaint(self):
         pygame.display.flip()  # Displays currently drawn frame
         self.screen.fill(pygame.Color(0, 0, 0))  # Clears screen with a black color
+
