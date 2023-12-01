@@ -84,6 +84,14 @@ class Variables:
 
         self.keyboard = Keyboard()
 
+        self.firstMouseDown = False
+
+        self.firstMousePos = 0
+
+        self.distFromFirstMousePos = 0
+
+        self.overallMouseDistance = 0
+
         self.editBackgroundBig = pygame.Rect(0, 0, 800, 480)  # Edit background
         
         self.blockEdits = pygame.Rect(520, 50, 110, 40)  # Edit background
@@ -91,6 +99,8 @@ class Variables:
         self.backgroundOfCamera = pygame.Rect(150, 50, 520, 400)  # Edit background of camera
 
         self.keypadAcceptButton = Buttons(700, 20,80,40, 0, 255, 0, "Save", 25, 0,0,0)
+
+        
 
         self.takePictureButton = Buttons(275, 400,250,30, 20,20,20, "Take Picture", 25, 255,255,255)
 
@@ -290,9 +300,25 @@ class Variables:
 
                     self.entryJustDeleted = True
 
+            if self.mouseDown:
+                mouseX, mouseY = pygame.mouse.get_pos()
+                if not self.firstMouseDown:
+                    self.firstMousePos = mouseY
+                    self.firstMouseDown = True
+
+                if (self.overallMouseDistance + mouseY - self.firstMousePos < 0 ) and (mouseX < 520):
+                    self.distFromFirstMousePos = self.overallMouseDistance + mouseY - self.firstMousePos
+            else:
+                self.firstMouseDown = False
+                self.overallMouseDistance = self.distFromFirstMousePos
+                
+            
+
+
+
             if len(self.entryList) != 0:
                 anchX = 40
-                anchY = 40
+                anchY = 40 + self.distFromFirstMousePos
 
                 for entry in self.entryList:
                     entry.showItemInList(anchX, anchY, self.screen)
