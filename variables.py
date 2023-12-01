@@ -240,7 +240,7 @@ class Variables:
                 self.screen.blit(self.snapshot, (170, 70))
 
                 if(self.takePictureButton.isClicked(self.mouseDown)):
-                    pygame.image.save(self.snapshot, "media/screenie.png")
+                    pygame.image.save(self.snapshot, "ObjectDetection/data/screenie.png")
                     self.showPic = False
             
 

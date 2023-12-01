@@ -47,9 +47,9 @@ except (ImportError, AssertionError):
 
 from ultralytics.utils.checks import check_requirements
 
-from utils import TryExcept, emojis
-from utils.downloads import curl_download, gsutil_getsize
-from utils.metrics import box_iou, fitness
+#from utils import TryExcept, emojis
+from downloads import curl_download, gsutil_getsize
+from metrics import box_iou, fitness
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[1]  # YOLOv5 root directory
@@ -157,11 +157,11 @@ def set_logging(name=LOGGING_NAME, verbose=True):
                 'propagate': False, }}})
 
 
-set_logging(LOGGING_NAME)  # run before defining LOGGER
-LOGGER = logging.getLogger(LOGGING_NAME)  # define globally (used in train.py, val.py, detect.py, etc.)
-if platform.system() == 'Windows':
-    for fn in LOGGER.info, LOGGER.warning:
-        setattr(LOGGER, fn.__name__, lambda x: fn(emojis(x)))  # emoji safe logging
+# set_logging(LOGGING_NAME)  # run before defining LOGGER
+# LOGGER = logging.getLogger(LOGGING_NAME)  # define globally (used in train.py, val.py, detect.py, etc.)
+# if platform.system() == 'Windows':
+#     for fn in LOGGER.info, LOGGER.warning:
+#         setattr(LOGGER, fn.__name__, lambda x: fn(emojis(x)))  # emoji safe logging
 
 
 def user_config_dir(dir='Ultralytics', env_var='YOLOV5_CONFIG_DIR'):
@@ -252,7 +252,7 @@ def print_args(args: Optional[dict] = None, show_file=True, show_func=False):
     except ValueError:
         file = Path(file).stem
     s = (f'{file}: ' if show_file else '') + (f'{func}: ' if show_func else '')
-    LOGGER.info(colorstr(s) + ', '.join(f'{k}={v}' for k, v in args.items()))
+    # LOGGER.info(colorstr(s) + ', '.join(f'{k}={v}' for k, v in args.items()))
 
 
 def init_seeds(seed=0, deterministic=False):
@@ -335,50 +335,50 @@ def git_describe(path=ROOT):  # path must be a directory
         return ''
 
 
-@TryExcept()
-@WorkingDirectory(ROOT)
-def check_git_status(repo='ultralytics/yolov5', branch='master'):
-    # YOLOv5 status check, recommend 'git pull' if code is out of date
-    url = f'https://github.com/{repo}'
-    msg = f', for updates see {url}'
-    s = colorstr('github: ')  # string
-    assert Path('.git').exists(), s + 'skipping check (not a git repository)' + msg
-    assert check_online(), s + 'skipping check (offline)' + msg
+# @TryExcept()
+# @WorkingDirectory(ROOT)
+# def check_git_status(repo='ultralytics/yolov5', branch='master'):
+#     # YOLOv5 status check, recommend 'git pull' if code is out of date
+#     url = f'https://github.com/{repo}'
+#     msg = f', for updates see {url}'
+#     s = colorstr('github: ')  # string
+#     assert Path('.git').exists(), s + 'skipping check (not a git repository)' + msg
+#     assert check_online(), s + 'skipping check (offline)' + msg
 
-    splits = re.split(pattern=r'\s', string=check_output('git remote -v', shell=True).decode())
-    matches = [repo in s for s in splits]
-    if any(matches):
-        remote = splits[matches.index(True) - 1]
-    else:
-        remote = 'ultralytics'
-        check_output(f'git remote add {remote} {url}', shell=True)
-    check_output(f'git fetch {remote}', shell=True, timeout=5)  # git fetch
-    local_branch = check_output('git rev-parse --abbrev-ref HEAD', shell=True).decode().strip()  # checked out
-    n = int(check_output(f'git rev-list {local_branch}..{remote}/{branch} --count', shell=True))  # commits behind
-    if n > 0:
-        pull = 'git pull' if remote == 'origin' else f'git pull {remote} {branch}'
-        s += f"⚠️ YOLOv5 is out of date by {n} commit{'s' * (n > 1)}. Use '{pull}' or 'git clone {url}' to update."
-    else:
-        s += f'up to date with {url} ✅'
-    LOGGER.info(s)
+#     splits = re.split(pattern=r'\s', string=check_output('git remote -v', shell=True).decode())
+#     matches = [repo in s for s in splits]
+#     if any(matches):
+#         remote = splits[matches.index(True) - 1]
+#     else:
+#         remote = 'ultralytics'
+#         check_output(f'git remote add {remote} {url}', shell=True)
+#     check_output(f'git fetch {remote}', shell=True, timeout=5)  # git fetch
+#     local_branch = check_output('git rev-parse --abbrev-ref HEAD', shell=True).decode().strip()  # checked out
+#     n = int(check_output(f'git rev-list {local_branch}..{remote}/{branch} --count', shell=True))  # commits behind
+#     if n > 0:
+#         pull = 'git pull' if remote == 'origin' else f'git pull {remote} {branch}'
+#         s += f"⚠️ YOLOv5 is out of date by {n} commit{'s' * (n > 1)}. Use '{pull}' or 'git clone {url}' to update."
+#     else:
+#         s += f'up to date with {url} ✅'
+#     LOGGER.info(s)
 
 
-@WorkingDirectory(ROOT)
-def check_git_info(path='.'):
-    # YOLOv5 git info check, return {remote, branch, commit}
-    check_requirements('gitpython')
-    import git
-    try:
-        repo = git.Repo(path)
-        remote = repo.remotes.origin.url.replace('.git', '')  # i.e. 'https://github.com/ultralytics/yolov5'
-        commit = repo.head.commit.hexsha  # i.e. '3134699c73af83aac2a481435550b968d5792c0d'
-        try:
-            branch = repo.active_branch.name  # i.e. 'main'
-        except TypeError:  # not on any branch
-            branch = None  # i.e. 'detached HEAD' state
-        return {'remote': remote, 'branch': branch, 'commit': commit}
-    except git.exc.InvalidGitRepositoryError:  # path is not a git dir
-        return {'remote': None, 'branch': None, 'commit': None}
+# @WorkingDirectory(ROOT)
+# def check_git_info(path='.'):
+#     # YOLOv5 git info check, return {remote, branch, commit}
+#     check_requirements('gitpython')
+#     import git
+#     try:
+#         repo = git.Repo(path)
+#         remote = repo.remotes.origin.url.replace('.git', '')  # i.e. 'https://github.com/ultralytics/yolov5'
+#         commit = repo.head.commit.hexsha  # i.e. '3134699c73af83aac2a481435550b968d5792c0d'
+#         try:
+#             branch = repo.active_branch.name  # i.e. 'main'
+#         except TypeError:  # not on any branch
+#             branch = None  # i.e. 'detached HEAD' state
+#         return {'remote': remote, 'branch': branch, 'commit': commit}
+#     except git.exc.InvalidGitRepositoryError:  # path is not a git dir
+#         return {'remote': None, 'branch': None, 'commit': None}
 
 
 def check_python(minimum='3.8.0'):
@@ -391,10 +391,10 @@ def check_version(current='0.0.0', minimum='0.0.0', name='version ', pinned=Fals
     current, minimum = (pkg.parse_version(x) for x in (current, minimum))
     result = (current == minimum) if pinned else (current >= minimum)  # bool
     s = f'WARNING ⚠️ {name}{minimum} is required by YOLOv5, but {name}{current} is currently installed'  # string
-    if hard:
-        assert result, emojis(s)  # assert min requirements met
-    if verbose and not result:
-        LOGGER.warning(s)
+    # if hard:
+    #     assert result, emojis(s)  # assert min requirements met
+    # if verbose and not result:
+    #     LOGGER.warning(s)
     return result
 
 
@@ -405,8 +405,8 @@ def check_img_size(imgsz, s=32, floor=0):
     else:  # list i.e. img_size=[640, 480]
         imgsz = list(imgsz)  # convert to list if tuple
         new_size = [max(make_divisible(x, int(s)), floor) for x in imgsz]
-    if new_size != imgsz:
-        LOGGER.warning(f'WARNING ⚠️ --img-size {imgsz} must be multiple of max stride {s}, updating to {new_size}')
+    # if new_size != imgsz:
+        # LOGGER.warning(f'WARNING ⚠️ --img-size {imgsz} must be multiple of max stride {s}, updating to {new_size}')
     return new_size
 
 
@@ -421,8 +421,8 @@ def check_imshow(warn=False):
         cv2.waitKey(1)
         return True
     except Exception as e:
-        if warn:
-            LOGGER.warning(f'WARNING ⚠️ Environment does not support cv2.imshow() or PIL Image.show()\n{e}')
+        # if warn:
+            # LOGGER.warning(f'WARNING ⚠️ Environment does not support cv2.imshow() or PIL Image.show()\n{e}')
         return False
 
 
@@ -451,12 +451,12 @@ def check_file(file, suffix=''):
     elif file.startswith(('http:/', 'https:/')):  # download
         url = file  # warning: Pathlib turns :// -> :/
         file = Path(urllib.parse.unquote(file).split('?')[0]).name  # '%2F' to '/', split https://url.com/file.txt?auth
-        if os.path.isfile(file):
-            LOGGER.info(f'Found {url} locally at {file}')  # file already exists
-        else:
-            LOGGER.info(f'Downloading {url} to {file}...')
-            torch.hub.download_url_to_file(url, file)
-            assert Path(file).exists() and Path(file).stat().st_size > 0, f'File download failed: {url}'  # check
+        # if os.path.isfile(file):
+        #     # LOGGER.info(f'Found {url} locally at {file}')  # file already exists
+        # else:
+        #     # LOGGER.info(f'Downloading {url} to {file}...')
+        #     torch.hub.download_url_to_file(url, file)
+        #     assert Path(file).exists() and Path(file).stat().st_size > 0, f'File download failed: {url}'  # check
         return file
     elif file.startswith('clearml://'):  # ClearML Dataset ID
         assert 'clearml' in sys.modules, "ClearML is not installed, so cannot use ClearML dataset. Try running 'pip install clearml'."
@@ -476,7 +476,7 @@ def check_font(font=FONT, progress=False):
     file = CONFIG_DIR / font.name
     if not font.exists() and not file.exists():
         url = f'https://ultralytics.com/assets/{font.name}'
-        LOGGER.info(f'Downloading {url} to {file}...')
+        # LOGGER.info(f'Downloading {url} to {file}...')
         torch.hub.download_url_to_file(url, str(file), progress=progress)
 
 
@@ -495,8 +495,8 @@ def check_dataset(data, autodownload=True):
         data = yaml_load(data)  # dictionary
 
     # Checks
-    for k in 'train', 'val', 'names':
-        assert k in data, emojis(f"data.yaml '{k}:' field missing ❌")
+    # for k in 'train', 'val', 'names':
+        # assert k in data, emojis(f"data.yaml '{k}:' field missing ❌")
     if isinstance(data['names'], (list, tuple)):  # old array format
         data['names'] = dict(enumerate(data['names']))  # convert to dict
     assert all(isinstance(k, int) for k in data['names'].keys()), 'data.yaml names keys must be integers, i.e. 2: car'
@@ -522,33 +522,33 @@ def check_dataset(data, autodownload=True):
     if val:
         val = [Path(x).resolve() for x in (val if isinstance(val, list) else [val])]  # val path
         if not all(x.exists() for x in val):
-            LOGGER.info('\nDataset not found ⚠️, missing paths %s' % [str(x) for x in val if not x.exists()])
+            # LOGGER.info('\nDataset not found ⚠️, missing paths %s' % [str(x) for x in val if not x.exists()])
             if not s or not autodownload:
                 raise Exception('Dataset not found ❌')
             t = time.time()
             if s.startswith('http') and s.endswith('.zip'):  # URL
                 f = Path(s).name  # filename
-                LOGGER.info(f'Downloading {s} to {f}...')
+                # LOGGER.info(f'Downloading {s} to {f}...')
                 torch.hub.download_url_to_file(s, f)
                 Path(DATASETS_DIR).mkdir(parents=True, exist_ok=True)  # create root
                 unzip_file(f, path=DATASETS_DIR)  # unzip
                 Path(f).unlink()  # remove zip
                 r = None  # success
             elif s.startswith('bash '):  # bash script
-                LOGGER.info(f'Running {s} ...')
+                # LOGGER.info(f'Running {s} ...')
                 r = subprocess.run(s, shell=True)
             else:  # python script
                 r = exec(s, {'yaml': data})  # return None
             dt = f'({round(time.time() - t, 1)}s)'
             s = f"success ✅ {dt}, saved to {colorstr('bold', DATASETS_DIR)}" if r in (0, None) else f'failure {dt} ❌'
-            LOGGER.info(f'Dataset download {s}')
+            # LOGGER.info(f'Dataset download {s}')
     check_font('Arial.ttf' if is_ascii(data['names']) else 'Arial.Unicode.ttf', progress=True)  # download fonts
     return data  # dictionary
 
 
 def check_amp(model):
     # Check PyTorch Automatic Mixed Precision (AMP) functionality. Return True on correct operation
-    from models.common import AutoShape, DetectMultiBackend
+    from common import AutoShape, DetectMultiBackend
 
     def amp_allclose(model, im):
         # All close FP32 vs AMP results
@@ -566,11 +566,11 @@ def check_amp(model):
     im = f if f.exists() else 'https://ultralytics.com/images/bus.jpg' if check_online() else np.ones((640, 640, 3))
     try:
         assert amp_allclose(deepcopy(model), im) or amp_allclose(DetectMultiBackend('yolov5n.pt', device), im)
-        LOGGER.info(f'{prefix}checks passed ✅')
+        # LOGGER.info(f'{prefix}checks passed ✅')
         return True
     except Exception:
         help_url = 'https://github.com/ultralytics/yolov5/issues/7908'
-        LOGGER.warning(f'{prefix}checks failed ❌, disabling Automatic Mixed Precision. See {help_url}')
+        # LOGGER.warning(f'{prefix}checks failed ❌, disabling Automatic Mixed Precision. See {help_url}')
         return False
 
 
@@ -611,7 +611,7 @@ def download(url, dir='.', unzip=True, delete=True, curl=False, threads=1, retry
             f = Path(url)  # filename
         else:  # does not exist
             f = dir / Path(url).name
-            LOGGER.info(f'Downloading {url} to {f}...')
+            # LOGGER.info(f'Downloading {url} to {f}...')
             for i in range(retry + 1):
                 if curl:
                     success = curl_download(url, f, silent=(threads > 1))
@@ -620,13 +620,13 @@ def download(url, dir='.', unzip=True, delete=True, curl=False, threads=1, retry
                     success = f.is_file()
                 if success:
                     break
-                elif i < retry:
-                    LOGGER.warning(f'⚠️ Download failure, retrying {i + 1}/{retry} {url}...')
-                else:
-                    LOGGER.warning(f'❌ Failed to download {url}...')
+                # elif i < retry:
+                #     # LOGGER.warning(f'⚠️ Download failure, retrying {i + 1}/{retry} {url}...')
+                # else:
+                #     LOGGER.warning(f'❌ Failed to download {url}...')
 
         if unzip and success and (f.suffix == '.gz' or is_zipfile(f) or is_tarfile(f)):
-            LOGGER.info(f'Unzipping {f}...')
+            # LOGGER.info(f'Unzipping {f}...')
             if is_zipfile(f):
                 unzip_file(f, dir)  # unzip
             elif is_tarfile(f):
@@ -970,7 +970,7 @@ def non_max_suppression(
         if mps:
             output[xi] = output[xi].to(device)
         if (time.time() - t) > time_limit:
-            LOGGER.warning(f'WARNING ⚠️ NMS time limit {time_limit:.3f}s exceeded')
+            # LOGGER.warning(f'WARNING ⚠️ NMS time limit {time_limit:.3f}s exceeded')
             break  # time limit exceeded
 
     return output
@@ -989,7 +989,7 @@ def strip_optimizer(f='best.pt', s=''):  # from utils.general import *; strip_op
         p.requires_grad = False
     torch.save(x, s or f)
     mb = os.path.getsize(s or f) / 1E6  # filesize
-    LOGGER.info(f"Optimizer stripped from {f},{f' saved as {s},' if s else ''} {mb:.1f}MB")
+    # LOGGER.info(f"Optimizer stripped from {f},{f' saved as {s},' if s else ''} {mb:.1f}MB")
 
 
 def print_mutation(keys, results, hyp, save_dir, bucket, prefix=colorstr('evolve: ')):
@@ -1023,9 +1023,9 @@ def print_mutation(keys, results, hyp, save_dir, bucket, prefix=colorstr('evolve
         yaml.safe_dump(data.loc[i][7:].to_dict(), f, sort_keys=False)
 
     # Print to screen
-    LOGGER.info(prefix + f'{generations} generations finished, current result:\n' + prefix +
-                ', '.join(f'{x.strip():>20s}' for x in keys) + '\n' + prefix + ', '.join(f'{x:20.5g}'
-                                                                                         for x in vals) + '\n\n')
+    # LOGGER.info(prefix + f'{generations} generations finished, current result:\n' + prefix +
+    #             ', '.join(f'{x.strip():>20s}' for x in keys) + '\n' + prefix + ', '.join(f'{x:20.5g}'
+    #                                                                                      for x in vals) + '\n\n')
 
     if bucket:
         subprocess.run(['gsutil', 'cp', f'{evolve_csv}', f'{evolve_yaml}', f'gs://{bucket}'])  # upload
