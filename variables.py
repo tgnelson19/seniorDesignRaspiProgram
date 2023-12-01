@@ -53,12 +53,14 @@ class Variables:
         self.addExampleEntry = Buttons(580, 40, 180, 100, 100, 100, 100, "Add Entry", 25, 255, 255, 255)
 
         self.syncButton = Buttons(580, 160, 180, 50, 100, 100, 100, "Sync Data", 25, 255, 255, 255)
+
+        self.deleteallButton = Buttons(580, 230, 180, 50, 100,0,0, "Delete All", 25, 255, 255, 255)
         
-        self.objectDetectButton = Buttons(580, 230, 180, 50, 100, 100, 100, "Object Detect", 25, 255, 255, 255)
+        self.objectDetectButton = Buttons(10, 105, 180, 50, 100, 100, 100, "Object Detect", 25, 255, 255, 255)
 
         self.exitButton = Buttons(580, 400, 180, 40, 100,0,0, "Exit App", 25, 255, 255, 255)
         
-        self.deleteallButton = Buttons(580, 300, 180, 40, 100,0,0, "Delete All", 25, 255, 255, 255)
+        
         
         
         
@@ -66,7 +68,7 @@ class Variables:
 
 
         #button list
-        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton, self.deleteallButton, self.objectDetectButton]
+        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton, self.deleteallButton]
 
         self.entryList = []
 
@@ -156,6 +158,10 @@ class Variables:
         with open("entries.json", "w") as f:
             json.dump(self.entriesJSON, f, indent=2)
 
+
+        self.currItemEdited = newEntry
+        self.currState = "Edit Name"
+
     #
     #
     #
@@ -194,6 +200,9 @@ class Variables:
             self.keyboard.showKeys(self.screen)
 
             self.keypadAcceptButton.drawButton(self.screen)
+
+            self.objectDetectButton.isHoveredOver()
+            self.objectDetectButton.drawButton(self.screen)
             
             
             temp = self.keyboard.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.name)
@@ -216,6 +225,23 @@ class Variables:
                 self.currState = "Edit Entry"
             if self.editExpirationButton.isClicked(self.mouseDown):
                 self.currState = "Edit Exp"
+
+            if self.objectDetectButton.isClicked(self.mouseDown):
+                    self.showPic = True
+                    
+            if self.showPic == True:
+                pygame.draw.rect(self.screen, (50,50,50), self.backgroundOfCamera)
+                self.takePictureButton.isHoveredOver()
+                self.takePictureButton.drawButton(self.screen)
+                
+                if self.webcam.query_image():
+                    self.snapshot = self.webcam.get_image(self.snapshot)
+
+                self.screen.blit(self.snapshot, (170, 70))
+
+                if(self.takePictureButton.isClicked(self.mouseDown)):
+                    pygame.image.save(self.snapshot, "media/screenie.png")
+                    self.showPic = False
             
 
         if self.currState == "Edit Entry":
@@ -297,14 +323,11 @@ class Variables:
                     button.isHoveredOver()
                     button.drawButton(self.screen)
 
-            if self.addExampleEntry.isClicked(self.mouseDown):
-                self.makeNewEntry()
-
             if self.exitButton.isClicked(self.mouseDown):
                 self.done = True
                 
-            if self.objectDetectButton.isClicked(self.mouseDown):
-                    self.showPic = True
+            if self.addExampleEntry.isClicked(self.mouseDown):
+                self.makeNewEntry()
             
             if self.deleteallButton.isClicked(self.mouseDown):
                 self.entryList.clear()
@@ -367,23 +390,6 @@ class Variables:
                     entry.showItemInList(anchX, anchY, self.screen)
                     anchY += 60
                     
-                    
-            if self.showPic == True:
-                pygame.draw.rect(self.screen, (50,50,50), self.backgroundOfCamera)
-                self.takePictureButton.isHoveredOver()
-                self.takePictureButton.drawButton(self.screen)
-                
-                if self.webcam.query_image():
-                    self.snapshot = self.webcam.get_image(self.snapshot)
-
-                self.screen.blit(self.snapshot, (170, 70))
-
-                if(self.takePictureButton.isClicked(self.mouseDown)):
-                    pygame.image.save(self.snapshot, "media/screenie.png")
-                    self.showPic = False
-
-
-
 
     #Generates handler variables for event tracking
 
