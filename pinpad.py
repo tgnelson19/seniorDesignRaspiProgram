@@ -31,7 +31,7 @@ class Pinpad:
         self.ThreeKey = Buttons(self.keypadTopLeftX  + self.keySize*2 + self.keySpacing*2,self.keypadTopLeftY + self.keySize*2 + self.keySpacing*2,50,50,100,100,100, "3", self.keyFontSize, 0,0,0)
         self.DeleteKey = Buttons(self.keypadTopLeftX,self.keypadTopLeftY + self.keySize*3 + self.keySpacing*3,50,50,190,0,0, "<==", self.keyFontSize, 0,0,0)
         self.ZeroKey = Buttons(self.keypadTopLeftX + self.keySize + self.keySpacing,self.keypadTopLeftY+ self.keySize*3 + self.keySpacing*3,50,50,100,100,100, "0", self.keyFontSize, 0,0,0)
-        self.EnterKey = Buttons(self.keypadTopLeftX + self.keySize*2 + self.keySpacing*2,self.keypadTopLeftY+ self.keySize*3 + self.keySpacing*3,50,50,100,100,100, "Enter", self.keyFontSize, 0,0,0)
+        self.EnterKey = Buttons(self.keypadTopLeftX + self.keySize*2 + self.keySpacing*2,self.keypadTopLeftY+ self.keySize*3 + self.keySpacing*3,50,50,0,255,0, "Enter", self.keyFontSize, 0,0,0)
         self.SlashKey = Buttons(self.keypadTopLeftX + self.keySize*3 + self.keySpacing*3,self.keypadTopLeftY,50,50,100,100,100, "/", self.keyFontSize, 0,0,0)
         self.ClearKey = Buttons(self.keypadTopLeftX + self.keySize*3 + self.keySpacing*3,self.keypadTopLeftY + self.keySize + self.keySpacing,50,50,190,100,100, "Clear", self.keyFontSize, 0,0,0)
 
@@ -61,16 +61,16 @@ class Pinpad:
         self.ClearKey.drawButton(screen)
 
 
-    def runKeyLogic(self, screen, mouseDown, word):
+    def runKeyLogic(self, screen, mouseDown, word, entryOrExpiration):
 
         if self.EnterKey.isClicked(mouseDown):
 
-            if self.entryOrExpiration == "Entry Date = ":
+            if entryOrExpiration == "Entry Date = ":
                 self.entryOrExpiration = "Exp. Date = "
                 return "To NumberpadTwo"
             
             else:
-                self.entryOrExpiration = "Entry Date = "
+                entryOrExpiration = "Entry Date = "
                 return "Exiting Editing"
             
         if self.ClearKey.isClicked(mouseDown):
@@ -86,7 +86,7 @@ class Pinpad:
                 word = word + self.keyNumbers[self.keyArray.index(key)]
 
 
-        textRender = self.font.render(self.entryOrExpiration + str(word), True, self.textRGB)
+        textRender = self.font.render(entryOrExpiration + str(word), True, self.textRGB)
         textRect = textRender.get_rect(center=(self.textBoxBackground.center))
         screen.blit(textRender, textRect)
         

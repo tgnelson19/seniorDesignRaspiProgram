@@ -50,7 +50,9 @@ class ItemEntry:
 
         
         self.entryButton.moveButton(anchX + 420, anchY + 5)
+        self.entryButton.isHoveredOver()
         self.entryButton.drawButton(screen)
 
         self.editButton.moveButton(anchX + 360, anchY + 5)
+        self.editButton.isHoveredOver()
         self.editButton.drawButton(screen)

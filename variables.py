@@ -100,6 +100,12 @@ class Variables:
 
         self.keypadAcceptButton = Buttons(700, 20,80,40, 0, 255, 0, "Save", 25, 0,0,0)
 
+        miniXOffset = 100
+        miniYOffset = -40
+
+        self.editNameButton = Buttons(70 + miniXOffset, 50 + miniYOffset, 50, 30, 255,255,237, "Edit", 10, 0, 0, 0)
+        self.editEntryDateButton = Buttons(200+ miniXOffset, 50 + miniYOffset, 50, 30, 255,255,237, "Edit", 10, 0, 0, 0)
+        self.editExpirationButton = Buttons(330+ miniXOffset, 50 + miniYOffset, 50, 30, 255,255,237, "Edit", 10, 0, 0, 0)
         
 
         self.takePictureButton = Buttons(275, 400,250,30, 20,20,20, "Take Picture", 25, 255,255,255)
@@ -201,17 +207,30 @@ class Variables:
             if self.keypadAcceptButton.isClicked(self.mouseDown):
                 self.currState = "Home"
 
+            self.editEntryDateButton.isHoveredOver()
+            self.editEntryDateButton.drawButton(self.screen)
+            self.editExpirationButton.isHoveredOver()
+            self.editExpirationButton.drawButton(self.screen)
+
+            if self.editEntryDateButton.isClicked(self.mouseDown):
+                self.currState = "Edit Entry"
+            if self.editExpirationButton.isClicked(self.mouseDown):
+                self.currState = "Edit Exp"
+            
+
         if self.currState == "Edit Entry":
 
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
             self.currItemEdited.showItemInList(160, 50, self.screen)
 
+            pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+
             self.pinpad.showKeys(self.screen)
 
             self.keypadAcceptButton.drawButton(self.screen)
 
-            temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.entryDate)
+            temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.entryDate, "Entry Date = ")
             
             if temp == "To NumberpadTwo":
                 self.currState = "Edit Exp"
@@ -222,17 +241,31 @@ class Variables:
             if self.keypadAcceptButton.isClicked(self.mouseDown):
                 self.currState = "Home"
 
+            self.editNameButton.isHoveredOver()
+            self.editNameButton.drawButton(self.screen)
+            self.editExpirationButton.isHoveredOver()
+            self.editExpirationButton.drawButton(self.screen)
+
+            if self.editNameButton.isClicked(self.mouseDown):
+                self.currState = "Edit Name"
+            if self.editExpirationButton.isClicked(self.mouseDown):
+                self.currState = "Edit Exp"
+
         if self.currState == "Edit Exp":
+
+            
 
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
             self.currItemEdited.showItemInList(160, 50, self.screen)
 
+            pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+
             self.pinpad.showKeys(self.screen)
 
             self.keypadAcceptButton.drawButton(self.screen)
 
-            temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.expDate)
+            temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.expDate, "Exp. Date = ")
             
             if temp == "Exiting Editing":
                 self.currState = "Home"
@@ -242,6 +275,16 @@ class Variables:
             self.keypadAcceptButton.isHoveredOver()
             if self.keypadAcceptButton.isClicked(self.mouseDown):
                 self.currState = "Home"
+
+            self.editEntryDateButton.drawButton(self.screen)
+            self.editEntryDateButton.isHoveredOver()
+            if self.editEntryDateButton.isClicked(self.mouseDown):
+                self.currState = "Edit Entry"
+
+            self.editNameButton.drawButton(self.screen)
+            self.editNameButton.isHoveredOver()
+            if self.editNameButton.isClicked(self.mouseDown):
+                self.currState = "Edit Name"
 
 
         if self.currState == "Home":
