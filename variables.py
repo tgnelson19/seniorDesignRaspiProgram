@@ -11,12 +11,16 @@ import json
 from datetime import date
 from keyboard import Keyboard
 from pinpad import Pinpad
+import torch
 
 
 
 
 class Variables:
     def __init__(self):
+
+        self.model = torch.hub.load("ultralytics/yolov5", "yolov5s")  # or yolov5n - yolov5x6, custom
+
         pygame.init()  # Initializes a window
 
         pygame.display.set_caption("Raspberry Pi Software")
@@ -252,7 +256,18 @@ class Variables:
                 self.screen.blit(self.snapshot, (170, 70))
 
                 if(self.takePictureButton.isClicked(self.mouseDown)):
-                    pygame.image.save(self.snapshot, "ObjectDetection/data/screenie.png")
+                    pygame.image.save(self.snapshot, "yolov5/data/images/screenie.png")
+                    tempName = self.model("yolov5/data/images/screenie.png")
+
+
+
+                    for i in range(len(tempName.names)):
+                        if not(tempName.names[i] == "person" or tempName.names[i] == "persons"):
+                            self.currItemEdited.name = tempName.names[i-1].capitalize()
+                            break
+                        else:
+                            self.currItemEdited.name = "ERR: No Obj Fnd"
+                    
                     self.showPic = False
             
 

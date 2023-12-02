@@ -17,7 +17,7 @@ class Background:
         self.nameText =  self.font.render("Name", True, self.textRGB)
         self.entryDateText = self.font.render("Entry Date", True, self.textRGB)
         self.expirationDateText = self.font.render("Expiration Date", True, self.textRGB)
-        self.costText = self.font.render("Cost", True, self.textRGB)
+        self.costText = self.font.render("Cost ($)", True, self.textRGB)
 
         self.nameRect = self.nameText.get_rect(topleft = (40,20))
         self.entryDateRect = self.entryDateText.get_rect(topleft = (120,20))

@@ -83,7 +83,7 @@ class ItemEntry:
         expDateTextRect = expDateText.get_rect(centery=entryBox.centery, left=anchX + 200)
         screen.blit(expDateText, expDateTextRect)
         
-        costText = self.font.render(str(self.cost), True, self.textRGB)
+        costText = self.font.render("$" + str(self.cost), True, self.textRGB)
         costTextRect = costText.get_rect(centery=entryBox.centery, left=anchX + 300)
         screen.blit(costText, costTextRect)
 
