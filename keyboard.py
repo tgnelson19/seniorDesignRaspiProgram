@@ -4,7 +4,7 @@ from button import Buttons
 class Keyboard:
     def __init__(self):
         
-        
+        self.flash = 0
 
         self.keyboardBackground = pygame.Rect(0, 180, 800, 480)  # Edit background
         
@@ -124,7 +124,16 @@ class Keyboard:
                     self.isLowerCase = True
                     self.capsKey.changeColor(100,100,100)
         
-        textRender = self.font.render(str(word), True, self.textRGB)
+        if self.flash < 20:
+            self.flash += 1
+            textRender = self.font.render("Name = " + str(word) + "|", True, self.textRGB)
+        elif self.flash < 39:
+            self.flash += 1
+            textRender = self.font.render("Name = " + str(word) + "", True, self.textRGB)
+        else:
+            self.flash = 0
+            textRender = self.font.render("Name = " + str(word) + "", True, self.textRGB)
+
         textRect = textRender.get_rect(center=(self.textBoxBackground.center))
         screen.blit(textRender, textRect)
         

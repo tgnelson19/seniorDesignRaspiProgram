@@ -105,9 +105,10 @@ class Variables:
         miniXOffset = 100
         miniYOffset = -40
 
-        self.editNameButton = Buttons(70 + miniXOffset, 50 + miniYOffset, 50, 30, 255,255,237, "Edit", 10, 0, 0, 0)
-        self.editEntryDateButton = Buttons(200+ miniXOffset, 50 + miniYOffset, 50, 30, 255,255,237, "Edit", 10, 0, 0, 0)
-        self.editExpirationButton = Buttons(330+ miniXOffset, 50 + miniYOffset, 50, 30, 255,255,237, "Edit", 10, 0, 0, 0)
+        self.editNameButton = Buttons(50 + miniXOffset, 50 + miniYOffset, 100, 30, 255,255,0, "Edit Name", 15, 0, 0, 0)
+        self.editEntryDateButton = Buttons(170+ miniXOffset, 50 + miniYOffset, 100, 30, 255,255,0, "Edit Entry", 15, 0, 0, 0)
+        self.editExpirationButton = Buttons(290+ miniXOffset, 50 + miniYOffset, 100, 30, 255,255,0, "Edit Expiration", 15, 0, 0, 0)
+        self.editCostButton = Buttons(410+ miniXOffset, 50 + miniYOffset, 100, 30, 255,255,0, "Edit Cost", 15, 0, 0, 0)
         
 
         self.takePictureButton = Buttons(275, 400,250,30, 20,20,20, "Take Picture", 25, 255,255,255)
@@ -195,7 +196,10 @@ class Variables:
 
             self.currItemEdited.showItemInList(160, 50, self.screen)
             
-            pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            if not self.currItemEdited.expired:
+                pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            else:
+                pygame.draw.rect(self.screen, (255,0,0), self.blockEdits)
 
             self.keyboard.showKeys(self.screen)
 
@@ -220,6 +224,11 @@ class Variables:
             self.editEntryDateButton.drawButton(self.screen)
             self.editExpirationButton.isHoveredOver()
             self.editExpirationButton.drawButton(self.screen)
+
+            self.editCostButton.isHoveredOver()
+            self.editCostButton.drawButton(self.screen)
+            if self.editCostButton.isClicked(self.mouseDown):
+                self.currState = "Edit Cost"
 
             if self.editEntryDateButton.isClicked(self.mouseDown):
                 self.currState = "Edit Entry"
@@ -250,7 +259,10 @@ class Variables:
 
             self.currItemEdited.showItemInList(160, 50, self.screen)
 
-            pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            if not self.currItemEdited.expired:
+                pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            else:
+                pygame.draw.rect(self.screen, (255,0,0), self.blockEdits)
 
             self.pinpad.showKeys(self.screen)
 
@@ -277,6 +289,11 @@ class Variables:
             if self.editExpirationButton.isClicked(self.mouseDown):
                 self.currState = "Edit Exp"
 
+            self.editCostButton.isHoveredOver()
+            self.editCostButton.drawButton(self.screen)
+            if self.editCostButton.isClicked(self.mouseDown):
+                self.currState = "Edit Cost"
+
         if self.currState == "Edit Exp":
 
             
@@ -285,7 +302,10 @@ class Variables:
 
             self.currItemEdited.showItemInList(160, 50, self.screen)
 
-            pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            if not self.currItemEdited.expired:
+                pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            else:
+                pygame.draw.rect(self.screen, (255,0,0), self.blockEdits)
 
             self.pinpad.showKeys(self.screen)
 
@@ -311,6 +331,55 @@ class Variables:
             self.editNameButton.isHoveredOver()
             if self.editNameButton.isClicked(self.mouseDown):
                 self.currState = "Edit Name"
+
+            self.editCostButton.isHoveredOver()
+            self.editCostButton.drawButton(self.screen)
+            if self.editCostButton.isClicked(self.mouseDown):
+                self.currState = "Edit Cost"
+
+        if self.currState == "Edit Cost":
+
+            
+
+            pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
+
+            self.currItemEdited.showItemInList(160, 50, self.screen)
+
+            if not self.currItemEdited.expired:
+                pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            else:
+                pygame.draw.rect(self.screen, (255,0,0), self.blockEdits)
+
+            self.pinpad.showKeys(self.screen)
+
+            self.keypadAcceptButton.drawButton(self.screen)
+
+            temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.cost, "Cost = ")
+            
+            if temp == "Exiting Editing":
+                self.currState = "Home"
+            else:
+                self.currItemEdited.cost = temp
+            
+            self.keypadAcceptButton.isHoveredOver()
+            if self.keypadAcceptButton.isClicked(self.mouseDown):
+                self.currState = "Home"
+
+            self.editEntryDateButton.drawButton(self.screen)
+            self.editEntryDateButton.isHoveredOver()
+            if self.editEntryDateButton.isClicked(self.mouseDown):
+                self.currState = "Edit Entry"
+
+            self.editNameButton.drawButton(self.screen)
+            self.editNameButton.isHoveredOver()
+            if self.editNameButton.isClicked(self.mouseDown):
+                self.currState = "Edit Name"
+
+
+            self.editExpirationButton.isHoveredOver()
+            self.editExpirationButton.drawButton(self.screen)
+            if self.editExpirationButton.isClicked(self.mouseDown):
+                self.currState = "Edit Exp"
 
 
         if self.currState == "Home":
@@ -384,11 +453,13 @@ class Variables:
 
             if len(self.entryList) != 0:
                 anchX = 40
-                anchY = 40 + self.distFromFirstMousePos
+                anchY = 80 + self.distFromFirstMousePos
 
                 for entry in self.entryList:
                     entry.showItemInList(anchX, anchY, self.screen)
                     anchY += 60
+
+            self.background.drawTopLevel(self.screen)
                     
 
     #Generates handler variables for event tracking
