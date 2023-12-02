@@ -3,24 +3,14 @@
     "EntryNum": "1",
     "Name": "Default",
     "EntryDate": "12/02/23",
-    "ExpirationDate": "12/02/23"
+    "ExpirationDate": "12/02/23",
+    "Cost": "1.00"
   },
   {
     "EntryNum": "2",
-    "Name": "Default",
+    "Name": "Clear",
     "EntryDate": "12/02/23",
-    "ExpirationDate": "12/02/23"
-  },
-  {
-    "EntryNum": "3",
-    "Name": "Default",
-    "EntryDate": "12/02/23",
-    "ExpirationDate": "12/02/23"
-  },
-  {
-    "EntryNum": "4",
-    "Name": "Default",
-    "EntryDate": "12/02/23",
-    "ExpirationDate": "12/02/23"
+    "ExpirationDate": "12/23/23",
+    "Cost": "2.00"
   }
 ]

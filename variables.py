@@ -27,6 +27,7 @@ class Variables:
 
         self.done = False  # Determines if the game is over or not
         self.mouseDown = False
+        self.justUpdated = False
 
         self.fontSize = 30
         self.font = pygame.font.Font("media/coolveticarg.otf", self.fontSize)
@@ -131,7 +132,7 @@ class Variables:
 
             self.entryList.append(
                 ItemEntry(
-                    item["EntryNum"], item["Name"], item["EntryDate"], item["ExpirationDate"]
+                    item["EntryNum"], item["Name"], item["EntryDate"], item["ExpirationDate"], item["Cost"]
                 )
             )
 
@@ -153,6 +154,7 @@ class Variables:
                 "Name": newEntry.name,
                 "EntryDate": newEntry.entryDate,
                 "ExpirationDate": newEntry.expDate,
+                "Cost": newEntry.cost
             }
         )
 
@@ -191,7 +193,8 @@ class Variables:
 
         if self.currState == "Edit Name":
 
-            
+            self.justUpdated = False
+
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
             self.currItemEdited.showItemInList(160, 50, self.screen)
@@ -383,6 +386,24 @@ class Variables:
 
 
         if self.currState == "Home":
+
+            if not self.justUpdated:
+                self.justUpdated = True
+                self.entriesJSON.clear()
+                for entry in self.entryList:
+                    self.entriesJSON.append(
+                    {
+                        "EntryNum": entry.entryNum,
+                        "Name": entry.name,
+                        "EntryDate": entry.entryDate,
+                        "ExpirationDate": entry.expDate,
+                        "Cost": entry.cost
+                    }
+                )
+                with open("entries.json", "w") as f:
+                    json.dump(self.entriesJSON, f, indent=2)
+
+
 
             self.background.drawMainBackground(self.screen)  # Draws the background first of everything
 
