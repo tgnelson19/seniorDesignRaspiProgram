@@ -20,6 +20,7 @@ class Variables:
     def __init__(self):
 
         self.model = torch.hub.load("ultralytics/yolov5", "yolov5s")  # or yolov5n - yolov5x6, custom
+        self.model.eval()
 
         pygame.init()  # Initializes a window
 
@@ -259,14 +260,18 @@ class Variables:
                     pygame.image.save(self.snapshot, "yolov5/data/images/screenie.png")
                     tempName = self.model("yolov5/data/images/screenie.png")
 
+                    pandaData = tempName.pandas().xyxy[0]
+                    names = pandaData['name']
 
 
-                    for i in range(len(tempName.names)):
-                        if not(tempName.names[i] == "person" or tempName.names[i] == "persons"):
-                            self.currItemEdited.name = tempName.names[i-1].capitalize()
+                    for i in range(len(names)):
+                        if not(names[i] == "person" or names[i] == "persons"):
+                            self.currItemEdited.name = names[i].capitalize()
                             break
                         else:
                             self.currItemEdited.name = "ERR: No Obj Fnd"
+
+                    print(tempName)
                     
                     self.showPic = False
             
