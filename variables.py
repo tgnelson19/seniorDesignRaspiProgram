@@ -53,6 +53,17 @@ class Variables:
 
         self.background = Background()
 
+        self.confirmationBackground = pygame.Rect(100, 100, 600, 280)  #Background rectangle
+
+        self.confirmButton = Buttons(200, 300, 150, 50, 0, 200, 0, "Yes", 25, 255, 255, 255)
+        self.cancelButton = Buttons(450, 300, 150, 50, 200, 0, 0, "No", 25, 255, 255, 255)
+
+        self.confirmationText = ""
+
+        self.deleteAll = "No"
+
+        self.entryToDelete = ItemEntry()
+
 
         #button makers (topleft x, toplefty, width, hieght, r ,g ,b, text string, font size, Tr, Tg, TB )
         
@@ -440,41 +451,9 @@ class Variables:
                 self.makeNewEntry()
             
             if self.deleteallButton.isClicked(self.mouseDown):
-                self.entryList.clear()
-                with open("entries.json", "w") as f:
-                    json.dump([], f, indent=2)
-                self.entriesJSON.clear()
 
-            #if self.syncButton.isClicked(self.mouseDown):
-                #self.syncToDatabase()
+                self.deleteAll = "deleteAll"
 
-            if not self.mouseDown:
-                self.entryJustDeleted = False
-
-            for entry in self.entryList:
-                entry.editButton.isHoveredOver()
-                entry.entryButton.isHoveredOver()
-
-                if (entry.editButton.isClicked(self.mouseDown)):
-
-                    self.currState = "Edit Name"
-                    self.currItemEdited = entry
-
-                if (
-                    entry.entryButton.isClicked(self.mouseDown)
-                    and not self.entryJustDeleted
-                ):
-                    for jEntry in self.entriesJSON:
-                        if int(jEntry["EntryNum"]) == int(entry.entryNum):
-                            self.entriesJSON.remove(jEntry)
-
-                    with open("entries.json", "w") as f:
-                        json.dump(self.entriesJSON, f, indent=2)
-
-                    self.entryList.remove(entry)
-                    del entry
-
-                    self.entryJustDeleted = True
 
             if self.mouseDown:
                 mouseX, mouseY = pygame.mouse.get_pos()
@@ -501,6 +480,94 @@ class Variables:
                     anchY += 60
 
             self.background.drawTopLevel(self.screen)
+
+
+
+
+
+
+            if self.deleteAll == "deleteAll":
+
+                pygame.draw.rect(self.screen, (10,10,10), self.confirmationBackground) #Paints background with given RGB
+
+                confirmText = self.font.render("Delete All Entries?", True, (255,255,255))
+                confirmTextRect = confirmText.get_rect(topleft = (260,200))
+                self.screen.blit(confirmText, confirmTextRect)
+
+
+                self.confirmButton.isHoveredOver()
+                self.confirmButton.drawButton(self.screen)
+                self.cancelButton.isHoveredOver()
+                self.cancelButton.drawButton(self.screen)
+
+                if self.confirmButton.isClicked(self.mouseDown):
+                    
+                    self.entryList.clear()
+                    with open("entries.json", "w") as f:
+                        json.dump([], f, indent=2)
+                    self.entriesJSON.clear()
+
+                    self.deleteAll = "No"
+
+                if self.cancelButton.isClicked(self.mouseDown):
+                    self.deleteAll = "No"
+
+            #if self.syncButton.isClicked(self.mouseDown):
+                #self.syncToDatabase()
+
+            if not self.mouseDown:
+                self.entryJustDeleted = False
+
+            for entry in self.entryList:
+                entry.editButton.isHoveredOver()
+                entry.entryButton.isHoveredOver()
+
+                if (entry.editButton.isClicked(self.mouseDown)):
+
+                    self.currState = "Edit Name"
+                    self.currItemEdited = entry
+
+                if (
+                    entry.entryButton.isClicked(self.mouseDown)
+                    and not self.entryJustDeleted
+                ):
+                    self.entryToDelete = entry
+                    self.deleteAll = "deleteOne"
+
+            if self.deleteAll == "deleteOne":
+
+                pygame.draw.rect(self.screen, (10,10,10), self.confirmationBackground) #Paints background with given RGB
+
+                confirmText = self.font.render("Delete Entry " + self.entryToDelete.name + "?", True, (255,255,255))
+                confirmTextRect = confirmText.get_rect(topleft = (260,200))
+                self.screen.blit(confirmText, confirmTextRect)
+
+                self.confirmButton.isHoveredOver()
+                self.confirmButton.drawButton(self.screen)
+                self.cancelButton.isHoveredOver()
+                self.cancelButton.drawButton(self.screen)
+
+                if self.confirmButton.isClicked(self.mouseDown):
+
+                    tempEntry = self.entryToDelete
+
+                    for jEntry in self.entriesJSON:
+                        if int(jEntry["EntryNum"]) == int(self.entryToDelete.entryNum):
+                            self.entriesJSON.remove(jEntry)
+
+                    with open("entries.json", "w") as f:
+                        json.dump(self.entriesJSON, f, indent=2)
+
+                    self.entryList.remove(self.entryToDelete)
+                    del tempEntry
+
+                    self.entryJustDeleted = True
+
+                    self.deleteAll = "No"
+
+                if self.cancelButton.isClicked(self.mouseDown):
+                    self.deleteAll = "No"
+
                     
 
     #Generates handler variables for event tracking
