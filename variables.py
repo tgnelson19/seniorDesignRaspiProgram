@@ -11,12 +11,17 @@ import json
 from datetime import date
 from keyboard import Keyboard
 from pinpad import Pinpad
+import torch
 
 
 
 
 class Variables:
     def __init__(self):
+
+        self.model = torch.hub.load("ultralytics/yolov5", "yolov5s")  # or yolov5n - yolov5x6, custom
+        self.model.eval()
+
         pygame.init()  # Initializes a window
 
         pygame.display.set_caption("Raspberry Pi Software")
@@ -27,6 +32,7 @@ class Variables:
 
         self.done = False  # Determines if the game is over or not
         self.mouseDown = False
+        self.justUpdated = False
 
         self.fontSize = 30
         self.font = pygame.font.Font("media/coolveticarg.otf", self.fontSize)
@@ -105,9 +111,10 @@ class Variables:
         miniXOffset = 100
         miniYOffset = -40
 
-        self.editNameButton = Buttons(70 + miniXOffset, 50 + miniYOffset, 50, 30, 255,255,237, "Edit", 10, 0, 0, 0)
-        self.editEntryDateButton = Buttons(200+ miniXOffset, 50 + miniYOffset, 50, 30, 255,255,237, "Edit", 10, 0, 0, 0)
-        self.editExpirationButton = Buttons(330+ miniXOffset, 50 + miniYOffset, 50, 30, 255,255,237, "Edit", 10, 0, 0, 0)
+        self.editNameButton = Buttons(50 + miniXOffset, 50 + miniYOffset, 100, 30, 255,255,0, "Edit Name", 15, 0, 0, 0)
+        self.editEntryDateButton = Buttons(170+ miniXOffset, 50 + miniYOffset, 100, 30, 255,255,0, "Edit Entry", 15, 0, 0, 0)
+        self.editExpirationButton = Buttons(290+ miniXOffset, 50 + miniYOffset, 100, 30, 255,255,0, "Edit Expiration", 15, 0, 0, 0)
+        self.editCostButton = Buttons(410+ miniXOffset, 50 + miniYOffset, 100, 30, 255,255,0, "Edit Cost", 15, 0, 0, 0)
         
 
         self.takePictureButton = Buttons(275, 400,250,30, 20,20,20, "Take Picture", 25, 255,255,255)
@@ -130,7 +137,7 @@ class Variables:
 
             self.entryList.append(
                 ItemEntry(
-                    item["EntryNum"], item["Name"], item["EntryDate"], item["ExpirationDate"]
+                    item["EntryNum"], item["Name"], item["EntryDate"], item["ExpirationDate"], item["Cost"]
                 )
             )
 
@@ -152,6 +159,7 @@ class Variables:
                 "Name": newEntry.name,
                 "EntryDate": newEntry.entryDate,
                 "ExpirationDate": newEntry.expDate,
+                "Cost": newEntry.cost
             }
         )
 
@@ -190,12 +198,16 @@ class Variables:
 
         if self.currState == "Edit Name":
 
-            
+            self.justUpdated = False
+
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
             self.currItemEdited.showItemInList(160, 50, self.screen)
             
-            pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            if not self.currItemEdited.expired:
+                pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            else:
+                pygame.draw.rect(self.screen, (255,0,0), self.blockEdits)
 
             self.keyboard.showKeys(self.screen)
 
@@ -221,6 +233,11 @@ class Variables:
             self.editExpirationButton.isHoveredOver()
             self.editExpirationButton.drawButton(self.screen)
 
+            self.editCostButton.isHoveredOver()
+            self.editCostButton.drawButton(self.screen)
+            if self.editCostButton.isClicked(self.mouseDown):
+                self.currState = "Edit Cost"
+
             if self.editEntryDateButton.isClicked(self.mouseDown):
                 self.currState = "Edit Entry"
             if self.editExpirationButton.isClicked(self.mouseDown):
@@ -240,7 +257,22 @@ class Variables:
                 self.screen.blit(self.snapshot, (170, 70))
 
                 if(self.takePictureButton.isClicked(self.mouseDown)):
-                    pygame.image.save(self.snapshot, "media/screenie.png")
+                    pygame.image.save(self.snapshot, "yolov5/data/images/screenie.png")
+                    tempName = self.model("yolov5/data/images/screenie.png")
+
+                    pandaData = tempName.pandas().xyxy[0]
+                    names = pandaData['name']
+
+
+                    for i in range(len(names)):
+                        if not(names[i] == "person" or names[i] == "persons"):
+                            self.currItemEdited.name = names[i].capitalize()
+                            break
+                        else:
+                            self.currItemEdited.name = "ERR: No Obj Fnd"
+
+                    print(tempName)
+                    
                     self.showPic = False
             
 
@@ -250,7 +282,10 @@ class Variables:
 
             self.currItemEdited.showItemInList(160, 50, self.screen)
 
-            pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            if not self.currItemEdited.expired:
+                pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            else:
+                pygame.draw.rect(self.screen, (255,0,0), self.blockEdits)
 
             self.pinpad.showKeys(self.screen)
 
@@ -277,6 +312,11 @@ class Variables:
             if self.editExpirationButton.isClicked(self.mouseDown):
                 self.currState = "Edit Exp"
 
+            self.editCostButton.isHoveredOver()
+            self.editCostButton.drawButton(self.screen)
+            if self.editCostButton.isClicked(self.mouseDown):
+                self.currState = "Edit Cost"
+
         if self.currState == "Edit Exp":
 
             
@@ -285,7 +325,10 @@ class Variables:
 
             self.currItemEdited.showItemInList(160, 50, self.screen)
 
-            pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            if not self.currItemEdited.expired:
+                pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            else:
+                pygame.draw.rect(self.screen, (255,0,0), self.blockEdits)
 
             self.pinpad.showKeys(self.screen)
 
@@ -312,8 +355,75 @@ class Variables:
             if self.editNameButton.isClicked(self.mouseDown):
                 self.currState = "Edit Name"
 
+            self.editCostButton.isHoveredOver()
+            self.editCostButton.drawButton(self.screen)
+            if self.editCostButton.isClicked(self.mouseDown):
+                self.currState = "Edit Cost"
+
+        if self.currState == "Edit Cost":
+
+            
+
+            pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
+
+            self.currItemEdited.showItemInList(160, 50, self.screen)
+
+            if not self.currItemEdited.expired:
+                pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
+            else:
+                pygame.draw.rect(self.screen, (255,0,0), self.blockEdits)
+
+            self.pinpad.showKeys(self.screen)
+
+            self.keypadAcceptButton.drawButton(self.screen)
+
+            temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.cost, "Cost = ")
+            
+            if temp == "Exiting Editing":
+                self.currState = "Home"
+            else:
+                self.currItemEdited.cost = temp
+            
+            self.keypadAcceptButton.isHoveredOver()
+            if self.keypadAcceptButton.isClicked(self.mouseDown):
+                self.currState = "Home"
+
+            self.editEntryDateButton.drawButton(self.screen)
+            self.editEntryDateButton.isHoveredOver()
+            if self.editEntryDateButton.isClicked(self.mouseDown):
+                self.currState = "Edit Entry"
+
+            self.editNameButton.drawButton(self.screen)
+            self.editNameButton.isHoveredOver()
+            if self.editNameButton.isClicked(self.mouseDown):
+                self.currState = "Edit Name"
+
+
+            self.editExpirationButton.isHoveredOver()
+            self.editExpirationButton.drawButton(self.screen)
+            if self.editExpirationButton.isClicked(self.mouseDown):
+                self.currState = "Edit Exp"
+
 
         if self.currState == "Home":
+
+            if not self.justUpdated:
+                self.justUpdated = True
+                self.entriesJSON.clear()
+                for entry in self.entryList:
+                    self.entriesJSON.append(
+                    {
+                        "EntryNum": entry.entryNum,
+                        "Name": entry.name,
+                        "EntryDate": entry.entryDate,
+                        "ExpirationDate": entry.expDate,
+                        "Cost": entry.cost
+                    }
+                )
+                with open("entries.json", "w") as f:
+                    json.dump(self.entriesJSON, f, indent=2)
+
+
 
             self.background.drawMainBackground(self.screen)  # Draws the background first of everything
 
@@ -384,11 +494,13 @@ class Variables:
 
             if len(self.entryList) != 0:
                 anchX = 40
-                anchY = 40 + self.distFromFirstMousePos
+                anchY = 80 + self.distFromFirstMousePos
 
                 for entry in self.entryList:
                     entry.showItemInList(anchX, anchY, self.screen)
                     anchY += 60
+
+            self.background.drawTopLevel(self.screen)
                     
 
     #Generates handler variables for event tracking

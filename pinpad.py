@@ -3,6 +3,9 @@ from button import Buttons
 
 class Pinpad:
     def __init__(self):
+
+        self.flash = 0
+
         self.keyboardBackground = pygame.Rect(0, 180, 800, 480)  # Edit background
         self.textBoxBackground = pygame.Rect(200, 100, 400, 60)  # Edit background
 
@@ -31,16 +34,16 @@ class Pinpad:
         self.ThreeKey = Buttons(self.keypadTopLeftX  + self.keySize*2 + self.keySpacing*2,self.keypadTopLeftY + self.keySize*2 + self.keySpacing*2,50,50,100,100,100, "3", self.keyFontSize, 0,0,0)
         self.DeleteKey = Buttons(self.keypadTopLeftX,self.keypadTopLeftY + self.keySize*3 + self.keySpacing*3,50,50,190,0,0, "<==", self.keyFontSize, 0,0,0)
         self.ZeroKey = Buttons(self.keypadTopLeftX + self.keySize + self.keySpacing,self.keypadTopLeftY+ self.keySize*3 + self.keySpacing*3,50,50,100,100,100, "0", self.keyFontSize, 0,0,0)
-        self.EnterKey = Buttons(self.keypadTopLeftX + self.keySize*2 + self.keySpacing*2,self.keypadTopLeftY+ self.keySize*3 + self.keySpacing*3,50,50,0,255,0, "Enter", self.keyFontSize, 0,0,0)
         self.SlashKey = Buttons(self.keypadTopLeftX + self.keySize*3 + self.keySpacing*3,self.keypadTopLeftY,50,50,100,100,100, "/", self.keyFontSize, 0,0,0)
-        self.ClearKey = Buttons(self.keypadTopLeftX + self.keySize*3 + self.keySpacing*3,self.keypadTopLeftY + self.keySize + self.keySpacing,50,50,190,100,100, "Clear", self.keyFontSize, 0,0,0)
+        self.PeriodKey = Buttons(self.keypadTopLeftX + self.keySize*2 + self.keySpacing*2,self.keypadTopLeftY+ self.keySize*3 + self.keySpacing*3,50,50,100,100,100, ".", self.keyFontSize, 0,0,0)
+        self.ClearKey = Buttons(self.keypadTopLeftX + self.keySize*3 + self.keySpacing*3,self.keypadTopLeftY + self.keySize + self.keySpacing,50,50,255,0,0, "Clear", self.keyFontSize, 0,0,0)
 
 
         self.keyArray = [self.SevenKey, self.EightKey,self.NineKey,self.FourKey,
                          self.FiveKey,self.SixKey,self.OneKey,self.TwoKey,self.ThreeKey,
-                         self.ZeroKey, self.SlashKey]
+                         self.ZeroKey, self.SlashKey, self.PeriodKey]
         
-        self.keyNumbers = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "/"]
+        self.keyNumbers = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "/", "."]
 
 
 
@@ -53,26 +56,16 @@ class Pinpad:
             key.drawButton(screen)
             key.isHoveredOver()
 
-        self.EnterKey.isHoveredOver()
-        self.EnterKey.drawButton(screen)
         self.DeleteKey.isHoveredOver()
         self.DeleteKey.drawButton(screen)
         self.ClearKey.isHoveredOver()
         self.ClearKey.drawButton(screen)
 
 
-    def runKeyLogic(self, screen, mouseDown, word, entryOrExpiration):
-
-        if self.EnterKey.isClicked(mouseDown):
-
-            if entryOrExpiration == "Entry Date = ":
-                self.entryOrExpiration = "Exp. Date = "
-                return "To NumberpadTwo"
+    def runKeyLogic(self, screen, mouseDown, word, entryOrExpirationOrCost):
             
-            else:
-                entryOrExpiration = "Entry Date = "
-                return "Exiting Editing"
-            
+
+        
         if self.ClearKey.isClicked(mouseDown):
             word = ""
             
@@ -86,7 +79,16 @@ class Pinpad:
                 word = word + self.keyNumbers[self.keyArray.index(key)]
 
 
-        textRender = self.font.render(entryOrExpiration + str(word), True, self.textRGB)
+        if self.flash < 20:
+            self.flash += 1
+            textRender = self.font.render(entryOrExpirationOrCost + str(word) + "|", True, self.textRGB)
+        elif self.flash < 39:
+            self.flash += 1
+            textRender = self.font.render(entryOrExpirationOrCost + str(word) + "", True, self.textRGB)
+        else:
+            self.flash = 0
+            textRender = self.font.render(entryOrExpirationOrCost + str(word) + "", True, self.textRGB)
+
         textRect = textRender.get_rect(center=(self.textBoxBackground.center))
         screen.blit(textRender, textRect)
         
