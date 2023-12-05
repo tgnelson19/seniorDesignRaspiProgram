@@ -12,6 +12,7 @@ from datetime import date
 from keyboard import Keyboard
 from pinpad import Pinpad
 import torch
+import os
 
 
 
@@ -19,8 +20,13 @@ import torch
 class Variables:
     def __init__(self):
 
+        self.cred_obj = firebase_admin.credentials.Certificate('seniordesign-9342c-firebase-adminsdk-649ck-3feee2e00b.json')
+        self.default_app = firebase_admin.initialize_app(self.cred_obj, {'databaseURL': 'https://seniordesign-9342c-default-rtdb.firebaseio.com/'})
+
         self.model = torch.hub.load("ultralytics/yolov5", "yolov5s")  # or yolov5n - yolov5x6, custom
         self.model.eval()
+
+        self.sendToPhone = "+13194231353"
 
         pygame.init()  # Initializes a window
 
@@ -43,11 +49,13 @@ class Variables:
 
         cameras = pygame.camera.list_cameras()
 
-        self.webcam = pygame.camera.Camera(cameras[0], (480, 320))
+        #self.webcam = pygame.camera.Camera(cameras[0], (480, 320))
 
-        self.webcam.start()
+        #self.webcam.start()
 
-        self.webcam.set_controls(hflip = True, vflip = False)
+        #self.webcam.set_controls(hflip = True, vflip = False)
+
+        self.imp = 0
 
         self.snapshot = pygame.surface.Surface((480,320), 0, self.screen)
 
@@ -69,9 +77,9 @@ class Variables:
         
         self.addExampleEntry = Buttons(580, 40, 180, 100, 100, 100, 100, "Add Entry", 25, 255, 255, 255)
 
-        self.syncButton = Buttons(580, 160, 180, 50, 100, 100, 100, "Sync Data", 25, 255, 255, 255)
+        #self.syncButton = Buttons(580, 160, 180, 50, 100, 100, 100, "Sync Data", 25, 255, 255, 255)
 
-        self.deleteallButton = Buttons(580, 230, 180, 50, 100,0,0, "Delete All", 25, 255, 255, 255)
+        self.deleteallButton = Buttons(580, 160, 180, 50, 100,0,0, "Delete All", 25, 255, 255, 255)
         
         self.objectDetectButton = Buttons(10, 105, 180, 50, 100, 100, 100, "Object Detect", 25, 255, 255, 255)
 
@@ -83,9 +91,10 @@ class Variables:
         
         #end of buttion maker 
 
+        self.iter = 0
 
         #button list
-        self.buttonList = [self.addExampleEntry, self.syncButton, self.exitButton, self.deleteallButton]
+        self.buttonList = [self.addExampleEntry, self.exitButton, self.deleteallButton]
 
         self.entryList = []
 
@@ -111,6 +120,8 @@ class Variables:
 
         self.overallMouseDistance = 0
 
+        self.totalLostMoney = 0
+
         self.editBackgroundBig = pygame.Rect(0, 0, 800, 480)  # Edit background
         
         self.blockEdits = pygame.Rect(520, 50, 110, 40)  # Edit background
@@ -129,13 +140,6 @@ class Variables:
         
 
         self.takePictureButton = Buttons(275, 400,250,30, 20,20,20, "Take Picture", 25, 255,255,255)
-
-        #
-        #
-        #Put Credentials here for firebase
-        #
-        #
-        #
 
         #Loads in current saved JSON to the program
 
@@ -180,8 +184,11 @@ class Variables:
 
         self.currItemEdited = newEntry
         self.currState = "Edit Name"
+        self.syncToDatabase()
 
-    #
+    
+
+
     #
     #
     #Syncs current stored data to the database
@@ -189,12 +196,12 @@ class Variables:
     #
     #
 
-    #def syncToDatabase(self):
-    #    ref = db.reference("/")
-    #
-    #   with open("entries.json", "r") as f:
-    #       file_contents = json.load(f)
-    #   ref.set(file_contents)
+    def syncToDatabase(self):
+        ref = db.reference("/")
+        
+        with open("entries.json", "r") as f:
+            file_contents = json.load(f)
+        ref.set(file_contents)
 
     #Updates the program (Done once per tick)
 
@@ -213,7 +220,7 @@ class Variables:
 
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
-            self.currItemEdited.showItemInList(160, 50, self.screen)
+            self.currItemEdited.showItemInList(160, 50, self.screen, "No")
             
             if not self.currItemEdited.expired:
                 pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
@@ -237,6 +244,7 @@ class Variables:
             
             self.keypadAcceptButton.isHoveredOver()
             if self.keypadAcceptButton.isClicked(self.mouseDown):
+                self.syncToDatabase()
                 self.currState = "Home"
 
             self.editEntryDateButton.isHoveredOver()
@@ -261,14 +269,17 @@ class Variables:
                 pygame.draw.rect(self.screen, (50,50,50), self.backgroundOfCamera)
                 self.takePictureButton.isHoveredOver()
                 self.takePictureButton.drawButton(self.screen)
-                
-                if self.webcam.query_image():
-                    self.snapshot = self.webcam.get_image(self.snapshot)
+             
+                if self.iter < 6:
+                    self.iter+=1
+                else:
+                    self.iter = 0
+                    os.system('rpicam-jpeg -o yolov5/data/images/screenie.png -t 2000 --width 480 --height 320')
+                    imp = pygame.image.load("yolov5/data/images/screenie.png").convert()
 
-                self.screen.blit(self.snapshot, (170, 70))
+                self.screen.blit(self.imp, (170, 70))
 
                 if(self.takePictureButton.isClicked(self.mouseDown)):
-                    pygame.image.save(self.snapshot, "yolov5/data/images/screenie.png")
                     tempName = self.model("yolov5/data/images/screenie.png")
 
                     pandaData = tempName.pandas().xyxy[0]
@@ -291,7 +302,7 @@ class Variables:
 
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
-            self.currItemEdited.showItemInList(160, 50, self.screen)
+            self.currItemEdited.showItemInList(160, 50, self.screen, "No")
 
             if not self.currItemEdited.expired:
                 pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
@@ -311,6 +322,7 @@ class Variables:
             
             self.keypadAcceptButton.isHoveredOver()
             if self.keypadAcceptButton.isClicked(self.mouseDown):
+                self.syncToDatabase()
                 self.currState = "Home"
 
             self.editNameButton.isHoveredOver()
@@ -334,7 +346,7 @@ class Variables:
 
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
-            self.currItemEdited.showItemInList(160, 50, self.screen)
+            self.currItemEdited.showItemInList(160, 50, self.screen, "No")
 
             if not self.currItemEdited.expired:
                 pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
@@ -348,12 +360,14 @@ class Variables:
             temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.expDate, "Exp. Date = ")
             
             if temp == "Exiting Editing":
+                self.syncToDatabase()
                 self.currState = "Home"
             else:
                 self.currItemEdited.expDate = temp
             
             self.keypadAcceptButton.isHoveredOver()
             if self.keypadAcceptButton.isClicked(self.mouseDown):
+                self.syncToDatabase()
                 self.currState = "Home"
 
             self.editEntryDateButton.drawButton(self.screen)
@@ -377,7 +391,7 @@ class Variables:
 
             pygame.draw.rect(self.screen, (50,50,50), self.editBackgroundBig)
 
-            self.currItemEdited.showItemInList(160, 50, self.screen)
+            self.currItemEdited.showItemInList(160, 50, self.screen, "No")
 
             if not self.currItemEdited.expired:
                 pygame.draw.rect(self.screen, (0,0,0), self.blockEdits)
@@ -391,12 +405,14 @@ class Variables:
             temp = self.pinpad.runKeyLogic(self.screen, self.mouseDown, self.currItemEdited.cost, "Cost = ")
             
             if temp == "Exiting Editing":
+                self.syncToDatabase()
                 self.currState = "Home"
             else:
                 self.currItemEdited.cost = temp
             
             self.keypadAcceptButton.isHoveredOver()
             if self.keypadAcceptButton.isClicked(self.mouseDown):
+                self.syncToDatabase()
                 self.currState = "Home"
 
             self.editEntryDateButton.drawButton(self.screen)
@@ -476,7 +492,7 @@ class Variables:
                 anchY = 80 + self.distFromFirstMousePos
 
                 for entry in self.entryList:
-                    entry.showItemInList(anchX, anchY, self.screen)
+                    entry.showItemInList(anchX, anchY, self.screen, self.sendToPhone)
                     anchY += 60
 
             self.background.drawTopLevel(self.screen)
@@ -506,6 +522,7 @@ class Variables:
                     with open("entries.json", "w") as f:
                         json.dump([], f, indent=2)
                     self.entriesJSON.clear()
+                    self.syncToDatabase()
 
                     self.deleteAll = "No"
 
@@ -564,6 +581,7 @@ class Variables:
                     self.entryJustDeleted = True
 
                     self.deleteAll = "No"
+                    self.syncToDatabase()
 
                 if self.cancelButton.isClicked(self.mouseDown):
                     self.deleteAll = "No"

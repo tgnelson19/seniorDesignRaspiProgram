@@ -2,7 +2,6 @@ import pygame
 from button import Buttons
 from datetime import date
 
-
 class ItemEntry:
     
     
@@ -10,6 +9,7 @@ class ItemEntry:
     def __init__(
         self, entryNum="0", name="Default", entryDate="00/00/0000", expDate="00/00/0000", cost = "0"
     ):
+
         self.entryNum = entryNum
         self.name = name
         self.entryDate = entryDate
@@ -33,7 +33,7 @@ class ItemEntry:
 
 
     #Draws the current entry to the screen
-    def showItemInList(self, anchX, anchY, screen):
+    def showItemInList(self, anchX, anchY, screen, sendToPhone):
 
         today = date.today()
         formattedDate = today.strftime("%m%d%y")
@@ -56,13 +56,13 @@ class ItemEntry:
 
         else:
 
-            if self.notificationSent == False:
 
-                #
-                # Notification logic
-                #
+            #Texting service
+            #if (self.notificationSent == False) and (sendToPhone != "No"):
+            #
+            #    message = self.client.messages.create( body= "Item " + self.name + " has expired", from_=self.senderPhone, to=sendToPhone)
 
-                self.notificationSent = True
+            self.notificationSent = True
 
             entryBox = pygame.Rect(anchX, anchY, 480, 40)
             pygame.draw.rect(screen, (255,0,0), entryBox)
