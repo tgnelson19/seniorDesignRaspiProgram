@@ -11,7 +11,7 @@ import json
 from datetime import date
 from keyboard import Keyboard
 from pinpad import Pinpad
-import torch
+import torch        # import torch library
 
 
 
