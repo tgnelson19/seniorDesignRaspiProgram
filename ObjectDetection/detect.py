@@ -30,12 +30,12 @@ Usage - formats:
 
 import argparse
 import csv
-import os
+import os                     #import OS library 
 import platform
-import sys
+import sys                    #import sys library 
 from pathlib import Path
 
-import torch
+import torch                 #import torch library 
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
