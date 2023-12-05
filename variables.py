@@ -526,4 +526,3 @@ class Variables:
     def finishPaint(self):
         pygame.display.flip()  # Displays currently drawn frame
         self.screen.fill(pygame.Color(0, 0, 0))  # Clears screen with a black color
-
