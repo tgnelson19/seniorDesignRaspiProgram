@@ -12,7 +12,7 @@ class Background:
         self.fontSize = 20
         self.font = pygame.font.Font("media/coolveticarg.otf", self.fontSize)
 
-        self.textRGB = (0,0,0)
+        self.textRGB = (0,0,0) #text size
 
         self.nameText =  self.font.render("Name", True, self.textRGB)
         self.entryDateText = self.font.render("Entry Date", True, self.textRGB)
