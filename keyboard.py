@@ -1,4 +1,4 @@
-import pygame
+import pygame    # import pygame library
 from button import Buttons
 
 class Keyboard:
